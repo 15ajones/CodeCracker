@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;CodeCracker/hello_world_small.c&apos; to &apos;Accelerometer.c&apos;" description="Rename resource &apos;hello_world_small.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="hello_world_small.c" name="Accelerometer.c" stamp="1645560719457" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;CodeCracker/hello_world_small.c&apos; to &apos;accelerometer.c&apos;" description="Rename resource &apos;hello_world_small.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="hello_world_small.c" name="accelerometer.c" stamp="1645565338685" updateReferences="true"/>
+</session>
