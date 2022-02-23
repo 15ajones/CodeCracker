@@ -1,4 +1,6 @@
 import boto3
+import socket
+from decimal import Decimal
 from pprint import pprint
 from boto3.dynamodb.conditions import Key
 
@@ -52,6 +54,24 @@ def add_user(user,ip, password, dynamodb=None):
     print("added user")
     return response
 
+def update_password(user, IP, passs):#pass param is the new password
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('Users')
+    response = table.update_item(
+        Key={
+            'User':user,
+            'IP':IP
+        },
+        UpdateExpression = "set info.password=:r",
+        ExpressionAttributeValues={
+            ':r': passs
+        },
+        ReturnValues = "UPDATED_NEW"
+    )
+    return response
+
+
+
 def query_user(user, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
@@ -61,7 +81,7 @@ def query_user(user, dynamodb=None):
     )
     results = response['Items']
     for result in results:
-        print(result)
+        return(result)
     print("finished query")
 
 def delete_user_table(dynamodb=None):
@@ -71,10 +91,58 @@ def delete_user_table(dynamodb=None):
     table = dynamodb.Table('Users')
     print("deleted table")
     table.delete()
-#create_user_table()
 #add_user("omar","192...","qwerty")
-query_user("omar")
-delete_user_table()
+# query_user("omar")
+# delete_user_table()
+print("We're in tcp server...");
+
+#select a server port
+server_port = 12000
+#create a UDP socket
+welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#bind the server to the localhost at port server_port
+welcome_socket.bind(('0.0.0.0',server_port))
+
+#extra for tcp socket:
+welcome_socket.listen(1)
+
+#ready message
+print('Server running on port ', server_port)
+
+#Now the loop that actually listens from clients
+while True:
+    connection_socket, caddr = welcome_socket.accept()
+    #notice recv and send instead of recvto and sendto
+    cmsg = connection_socket.recv(1024)  	
+    cmsg = cmsg.decode()
+    x = cmsg.split()
+    if x[0] == "add":
+        add_user(x[1],x[2],x[3])
+        cmsg = x[1] + " added"
+        connection_socket.send(cmsg.encode())
+    elif x[0] == "getpass":
+        cmsg = str(query_user(x[1])['info']['password'])
+        connection_socket.send(cmsg.encode())
+    elif x[0] == "guesspass":
+        actual_password = str(query_user(x[1])['info']['password'])
+        if x[2] == actual_password:
+            cmsg = "Correct!"
+        else:
+            cmsg = "Wrong!"
+        connection_socket.send(cmsg.encode())
+    elif x[0] == "updatepass":
+        update_password(x[1], x[2], x[3])
+        cmsg = "updated password!"
+        connection_socket.send(cmsg.encode())
 
 
-#example input add_user omar 192.766.222 qwerty
+
+        
+
+    
+
+    
+
+
+
+
