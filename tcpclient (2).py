@@ -17,7 +17,9 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Set up a TCP connection
 #connection_socket will be assigned to this client on the server side
 client_socket.connect((server_name, server_port))
-#some work
+
+# enabled commands:
+
 # msg = "add user1 192.168.6.87 mypassword"
 # msg = "getpass user1"
 # msg = "guesspass user1 mypassword"
