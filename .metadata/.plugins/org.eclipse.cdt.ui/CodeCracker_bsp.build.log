@@ -1,6 +1,6 @@
-21:28:04 **** Clean-only build of configuration Nios II for project CodeCracker_bsp ****
+18:38:14 **** Clean-only build of configuration Nios II for project CodeCracker_bsp ****
 make clean 
 [BSP clean complete]
 
-21:28:05 Build Finished (took 574ms)
+18:38:16 Build Finished (took 1s.263ms)
 

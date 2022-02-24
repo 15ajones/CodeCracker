@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>22-Feb-2022 21:29:40</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1645565380058</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>24-Feb-2022 18:39:35</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1645727975878</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\rohan\OneDrive\Documents\ImperialYear2\InformationProcessing\CodeCracker\Hardware\software\CodeCracker_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\CodeCracker.sopcinfo</SopcDesignFile>
@@ -875,6 +875,30 @@
                 <Group>none</Group>
         </Setting>
         <Setting>
+                <SettingName>altera_avalon_uart_driver.enable_small_driver</SettingName>
+                <Identifier>ALTERA_AVALON_UART_SMALL</Identifier>
+                <Type>BooleanDefineOnly</Type>
+                <Value>false</Value>
+                <DefaultValue>false</DefaultValue>
+                <DestinationFile>public_mk_define</DestinationFile>
+                <Description>Small-footprint (polled mode) driver</Description>
+                <Restrictions>none</Restrictions>
+                <Enabled>false</Enabled>
+                <Group xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </Setting>
+        <Setting>
+                <SettingName>altera_avalon_uart_driver.enable_ioctl</SettingName>
+                <Identifier>ALTERA_AVALON_UART_USE_IOCTL</Identifier>
+                <Type>BooleanDefineOnly</Type>
+                <Value>false</Value>
+                <DefaultValue>false</DefaultValue>
+                <DestinationFile>public_mk_define</DestinationFile>
+                <Description>Enable driver ioctl() support. This feature is not compatible with the 'small' driver; ioctl() support will not be compiled if either the UART 'enable_small_driver' or HAL 'enable_reduced_device_drivers' settings are enabled.</Description>
+                <Restrictions>none</Restrictions>
+                <Enabled>false</Enabled>
+                <Group xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </Setting>
+        <Setting>
                 <SettingName>altera_avalon_jtag_uart_driver.enable_small_driver</SettingName>
                 <Identifier>ALTERA_AVALON_JTAG_UART_SMALL</Identifier>
                 <Type>BooleanDefineOnly</Type>
@@ -905,80 +929,86 @@
                 <attributes>memory</attributes>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>timer</slaveDescriptor>
+                <slaveDescriptor>uart_0</slaveDescriptor>
                 <addressRange>0x00021000 - 0x0002101F</addressRange>
+                <addressSpan>32</addressSpan>
+                <attributes>printable</attributes>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>timer</slaveDescriptor>
+                <addressRange>0x00021020 - 0x0002103F</addressRange>
                 <addressSpan>32</addressSpan>
                 <attributes>timer</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>hex5</slaveDescriptor>
-                <addressRange>0x00021020 - 0x0002102F</addressRange>
-                <addressSpan>16</addressSpan>
-                <attributes/>
-        </MemoryMap>
-        <MemoryMap>
-                <slaveDescriptor>hex4</slaveDescriptor>
-                <addressRange>0x00021030 - 0x0002103F</addressRange>
-                <addressSpan>16</addressSpan>
-                <attributes/>
-        </MemoryMap>
-        <MemoryMap>
-                <slaveDescriptor>hex3</slaveDescriptor>
                 <addressRange>0x00021040 - 0x0002104F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>hex2</slaveDescriptor>
+                <slaveDescriptor>hex4</slaveDescriptor>
                 <addressRange>0x00021050 - 0x0002105F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>hex1</slaveDescriptor>
+                <slaveDescriptor>hex3</slaveDescriptor>
                 <addressRange>0x00021060 - 0x0002106F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>hex0</slaveDescriptor>
+                <slaveDescriptor>hex2</slaveDescriptor>
                 <addressRange>0x00021070 - 0x0002107F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>switch</slaveDescriptor>
+                <slaveDescriptor>hex1</slaveDescriptor>
                 <addressRange>0x00021080 - 0x0002108F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>button</slaveDescriptor>
+                <slaveDescriptor>hex0</slaveDescriptor>
                 <addressRange>0x00021090 - 0x0002109F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>led</slaveDescriptor>
+                <slaveDescriptor>switch</slaveDescriptor>
                 <addressRange>0x000210A0 - 0x000210AF</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>button</slaveDescriptor>
+                <addressRange>0x000210B0 - 0x000210BF</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>led</slaveDescriptor>
+                <addressRange>0x000210C0 - 0x000210CF</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>sysid_qsys_0</slaveDescriptor>
-                <addressRange>0x000210B0 - 0x000210B7</addressRange>
+                <addressRange>0x000210D0 - 0x000210D7</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart</slaveDescriptor>
-                <addressRange>0x000210B8 - 0x000210BF</addressRange>
+                <addressRange>0x000210D8 - 0x000210DF</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>accelerometer_spi</slaveDescriptor>
-                <addressRange>0x000210C0 - 0x000210C1</addressRange>
+                <addressRange>0x000210E0 - 0x000210E1</addressRange>
                 <addressSpan>2</addressSpan>
                 <attributes/>
         </MemoryMap>

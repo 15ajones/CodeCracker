@@ -4,7 +4,7 @@
  * Machine generated for CPU 'cpu' in SOPC Builder design 'CodeCracker'
  * SOPC Builder design path: ../../CodeCracker.sopcinfo
  *
- * Generated: Tue Feb 22 21:28:03 GMT 2022
+ * Generated: Thu Feb 24 18:38:13 GMT 2022
  */
 
 /*
@@ -62,6 +62,7 @@
 #include "altera_avalon_jtag_uart.h"
 #include "altera_avalon_sysid_qsys.h"
 #include "altera_avalon_timer.h"
+#include "altera_avalon_uart.h"
 #include "altera_up_avalon_accelerometer_spi.h"
 
 /*
@@ -72,6 +73,7 @@ ALTERA_NIOS2_GEN2_IRQ_INSTANCE ( CPU, cpu);
 ALTERA_AVALON_JTAG_UART_INSTANCE ( JTAG_UART, jtag_uart);
 ALTERA_AVALON_SYSID_QSYS_INSTANCE ( SYSID_QSYS_0, sysid_qsys_0);
 ALTERA_AVALON_TIMER_INSTANCE ( TIMER, timer);
+ALTERA_AVALON_UART_INSTANCE ( UART_0, uart_0);
 ALTERA_UP_AVALON_ACCELEROMETER_SPI_INSTANCE ( ACCELEROMETER_SPI, accelerometer_spi);
 
 /*
@@ -98,5 +100,6 @@ void alt_sys_init( void )
     ALTERA_AVALON_TIMER_INIT ( TIMER, timer);
     ALTERA_AVALON_JTAG_UART_INIT ( JTAG_UART, jtag_uart);
     ALTERA_AVALON_SYSID_QSYS_INIT ( SYSID_QSYS_0, sysid_qsys_0);
+    ALTERA_AVALON_UART_INIT ( UART_0, uart_0);
     ALTERA_UP_AVALON_ACCELEROMETER_SPI_INIT ( ACCELEROMETER_SPI, accelerometer_spi);
 }

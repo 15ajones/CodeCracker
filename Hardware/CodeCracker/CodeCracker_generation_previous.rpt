@@ -22,8 +22,8 @@ Progress: Adding hex4 [altera_avalon_pio 18.0]
 Progress: Parameterizing module hex4
 Progress: Adding hex5 [altera_avalon_pio 18.0]
 Progress: Parameterizing module hex5
-Progress: Adding jtag_uart_0 [altera_avalon_jtag_uart 18.0]
-Progress: Parameterizing module jtag_uart_0
+Progress: Adding jtag_uart [altera_avalon_jtag_uart 18.0]
+Progress: Parameterizing module jtag_uart
 Progress: Adding led [altera_avalon_pio 18.0]
 Progress: Parameterizing module led
 Progress: Adding onchip_memory [altera_avalon_onchip_memory2 18.0]
@@ -39,7 +39,7 @@ Progress: Parameterizing connections
 Progress: Validating
 Progress: Done reading input file
 Info: CodeCracker.button: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
-Info: CodeCracker.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
+Info: CodeCracker.jtag_uart: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
 Info: CodeCracker.switch: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
 Info: CodeCracker.sysid_qsys_0: System ID is not assigned automatically. Edit the System ID parameter to provide a unique ID
 Info: CodeCracker.sysid_qsys_0: Time stamp will be automatically updated when this component is generated.
@@ -70,8 +70,8 @@ Progress: Adding hex4 [altera_avalon_pio 18.0]
 Progress: Parameterizing module hex4
 Progress: Adding hex5 [altera_avalon_pio 18.0]
 Progress: Parameterizing module hex5
-Progress: Adding jtag_uart_0 [altera_avalon_jtag_uart 18.0]
-Progress: Parameterizing module jtag_uart_0
+Progress: Adding jtag_uart [altera_avalon_jtag_uart 18.0]
+Progress: Parameterizing module jtag_uart
 Progress: Adding led [altera_avalon_pio 18.0]
 Progress: Parameterizing module led
 Progress: Adding onchip_memory [altera_avalon_onchip_memory2 18.0]
@@ -87,7 +87,7 @@ Progress: Parameterizing connections
 Progress: Validating
 Progress: Done reading input file
 Info: CodeCracker.button: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
-Info: CodeCracker.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
+Info: CodeCracker.jtag_uart: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
 Info: CodeCracker.switch: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
 Info: CodeCracker.sysid_qsys_0: System ID is not assigned automatically. Edit the System ID parameter to provide a unique ID
 Info: CodeCracker.sysid_qsys_0: Time stamp will be automatically updated when this component is generated.
@@ -95,33 +95,33 @@ Info: CodeCracker: Generating CodeCracker "CodeCracker" for QUARTUS_SYNTH
 Info: accelerometer_spi: Starting Generation of the Accelerometer Controller in SPI mode
 Info: accelerometer_spi: "CodeCracker" instantiated altera_up_avalon_accelerometer_spi "accelerometer_spi"
 Info: button: Starting RTL generation for module 'CodeCracker_button'
-Info: button:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_button --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0003_button_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0003_button_gen//CodeCracker_button_component_configuration.pl  --do_build_sim=0  ]
+Info: button:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_button --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0015_button_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0015_button_gen//CodeCracker_button_component_configuration.pl  --do_build_sim=0  ]
 Info: button: Done RTL generation for module 'CodeCracker_button'
 Info: button: "CodeCracker" instantiated altera_avalon_pio "button"
 Info: cpu: "CodeCracker" instantiated altera_nios2_gen2 "cpu"
 Info: hex0: Starting RTL generation for module 'CodeCracker_hex0'
-Info: hex0:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_hex0 --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0004_hex0_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0004_hex0_gen//CodeCracker_hex0_component_configuration.pl  --do_build_sim=0  ]
+Info: hex0:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_hex0 --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0016_hex0_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0016_hex0_gen//CodeCracker_hex0_component_configuration.pl  --do_build_sim=0  ]
 Info: hex0: Done RTL generation for module 'CodeCracker_hex0'
 Info: hex0: "CodeCracker" instantiated altera_avalon_pio "hex0"
-Info: jtag_uart_0: Starting RTL generation for module 'CodeCracker_jtag_uart_0'
-Info: jtag_uart_0:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=CodeCracker_jtag_uart_0 --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0005_jtag_uart_0_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0005_jtag_uart_0_gen//CodeCracker_jtag_uart_0_component_configuration.pl  --do_build_sim=0  ]
-Info: jtag_uart_0: Done RTL generation for module 'CodeCracker_jtag_uart_0'
-Info: jtag_uart_0: "CodeCracker" instantiated altera_avalon_jtag_uart "jtag_uart_0"
+Info: jtag_uart: Starting RTL generation for module 'CodeCracker_jtag_uart'
+Info: jtag_uart:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=CodeCracker_jtag_uart --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0017_jtag_uart_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0017_jtag_uart_gen//CodeCracker_jtag_uart_component_configuration.pl  --do_build_sim=0  ]
+Info: jtag_uart: Done RTL generation for module 'CodeCracker_jtag_uart'
+Info: jtag_uart: "CodeCracker" instantiated altera_avalon_jtag_uart "jtag_uart"
 Info: led: Starting RTL generation for module 'CodeCracker_led'
-Info: led:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_led --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0006_led_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0006_led_gen//CodeCracker_led_component_configuration.pl  --do_build_sim=0  ]
+Info: led:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_led --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0018_led_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0018_led_gen//CodeCracker_led_component_configuration.pl  --do_build_sim=0  ]
 Info: led: Done RTL generation for module 'CodeCracker_led'
 Info: led: "CodeCracker" instantiated altera_avalon_pio "led"
 Info: onchip_memory: Starting RTL generation for module 'CodeCracker_onchip_memory'
-Info: onchip_memory:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2 -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2/generate_rtl.pl --name=CodeCracker_onchip_memory --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0007_onchip_memory_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0007_onchip_memory_gen//CodeCracker_onchip_memory_component_configuration.pl  --do_build_sim=0  ]
+Info: onchip_memory:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2 -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2/generate_rtl.pl --name=CodeCracker_onchip_memory --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0019_onchip_memory_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0019_onchip_memory_gen//CodeCracker_onchip_memory_component_configuration.pl  --do_build_sim=0  ]
 Info: onchip_memory: Done RTL generation for module 'CodeCracker_onchip_memory'
 Info: onchip_memory: "CodeCracker" instantiated altera_avalon_onchip_memory2 "onchip_memory"
 Info: switch: Starting RTL generation for module 'CodeCracker_switch'
-Info: switch:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_switch --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0008_switch_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0008_switch_gen//CodeCracker_switch_component_configuration.pl  --do_build_sim=0  ]
+Info: switch:   Generation command is [exec C:/intelfpga_lite/18.0/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.0/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=CodeCracker_switch --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0020_switch_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0020_switch_gen//CodeCracker_switch_component_configuration.pl  --do_build_sim=0  ]
 Info: switch: Done RTL generation for module 'CodeCracker_switch'
 Info: switch: "CodeCracker" instantiated altera_avalon_pio "switch"
 Info: sysid_qsys_0: "CodeCracker" instantiated altera_avalon_sysid_qsys "sysid_qsys_0"
 Info: timer: Starting RTL generation for module 'CodeCracker_timer'
-Info: timer:   Generation command is [exec C:/intelFPGA_lite/18.0/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.0/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=CodeCracker_timer --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0010_timer_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0010_timer_gen//CodeCracker_timer_component_configuration.pl  --do_build_sim=0  ]
+Info: timer:   Generation command is [exec C:/intelFPGA_lite/18.0/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.0/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.0/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=CodeCracker_timer --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0022_timer_gen/ --quartus_dir=C:/intelfpga_lite/18.0/quartus --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0022_timer_gen//CodeCracker_timer_component_configuration.pl  --do_build_sim=0  ]
 Info: timer: Done RTL generation for module 'CodeCracker_timer'
 Info: timer: "CodeCracker" instantiated altera_avalon_timer "timer"
 Info: avalon_st_adapter: Inserting error_adapter: error_adapter_0
@@ -143,22 +143,49 @@ Info: mm_interconnect_0: "CodeCracker" instantiated altera_mm_interconnect "mm_i
 Info: irq_mapper: "CodeCracker" instantiated altera_irq_mapper "irq_mapper"
 Info: rst_controller: "CodeCracker" instantiated altera_reset_controller "rst_controller"
 Info: cpu: Starting RTL generation for module 'CodeCracker_cpu_cpu'
-Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.0/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.0/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=CodeCracker_cpu_cpu --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0013_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.0/quartus/bin64/ --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0013_cpu_gen//CodeCracker_cpu_cpu_processor_configuration.pl  --do_build_sim=0  ]
-Info: cpu: # 2022.02.22 21:17:32 (*) Starting Nios II generation
-Info: cpu: # 2022.02.22 21:17:32 (*)   Checking for plaintext license.
-Info: cpu: # 2022.02.22 21:17:34 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.0/quartus/bin64/
-Info: cpu: # 2022.02.22 21:17:34 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
-Info: cpu: # 2022.02.22 21:17:34 (*)   LM_LICENSE_FILE environment variable is empty
-Info: cpu: # 2022.02.22 21:17:34 (*)   Plaintext license not found.
-Info: cpu: # 2022.02.22 21:17:34 (*)   No license required to generate encrypted Nios II/e.
-Info: cpu: # 2022.02.22 21:17:34 (*)   Elaborating CPU configuration settings
-Info: cpu: # 2022.02.22 21:17:34 (*)   Creating all objects for CPU
-Info: cpu: # 2022.02.22 21:17:35 (*)   Generating RTL from CPU objects
-Info: cpu: # 2022.02.22 21:17:35 (*)   Creating plain-text RTL
-Info: cpu: # 2022.02.22 21:17:36 (*) Done Nios II generation
+Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.0/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.0/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.0/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.0/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=CodeCracker_cpu_cpu --dir=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0025_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.0/quartus/bin64/ --verilog --config=C:/Users/rohan/AppData/Local/Temp/alt9045_5319677471125066609.dir/0025_cpu_gen//CodeCracker_cpu_cpu_processor_configuration.pl  --do_build_sim=0  ]
+Info: cpu: # 2022.02.22 21:19:10 (*) Starting Nios II generation
+Info: cpu: # 2022.02.22 21:19:10 (*)   Checking for plaintext license.
+Info: cpu: # 2022.02.22 21:19:11 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.0/quartus/bin64/
+Info: cpu: # 2022.02.22 21:19:11 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
+Info: cpu: # 2022.02.22 21:19:11 (*)   LM_LICENSE_FILE environment variable is empty
+Info: cpu: # 2022.02.22 21:19:11 (*)   Plaintext license not found.
+Info: cpu: # 2022.02.22 21:19:11 (*)   No license required to generate encrypted Nios II/e.
+Info: cpu: # 2022.02.22 21:19:11 (*)   Elaborating CPU configuration settings
+Info: cpu: # 2022.02.22 21:19:11 (*)   Creating all objects for CPU
+Info: cpu: # 2022.02.22 21:19:12 (*)   Generating RTL from CPU objects
+Info: cpu: # 2022.02.22 21:19:12 (*)   Creating plain-text RTL
+Info: cpu: # 2022.02.22 21:19:13 (*) Done Nios II generation
 Info: cpu: Done RTL generation for module 'CodeCracker_cpu_cpu'
 Info: cpu: "cpu" instantiated altera_nios2_gen2_unit "cpu"
-Error: Generation stopped, 118 or more modules remaining
-Info: CodeCracker: Done "CodeCracker" with 36 modules, 29 files
-Error: qsys-generate failed with exit code 1: 1 Error, 0 Warnings
-Info: Stopping: Create HDL design files for synthesis
+Info: cpu_data_master_translator: "mm_interconnect_0" instantiated altera_merlin_master_translator "cpu_data_master_translator"
+Info: accelerometer_spi_avalon_accelerometer_spi_mode_slave_translator: "mm_interconnect_0" instantiated altera_merlin_slave_translator "accelerometer_spi_avalon_accelerometer_spi_mode_slave_translator"
+Info: cpu_data_master_agent: "mm_interconnect_0" instantiated altera_merlin_master_agent "cpu_data_master_agent"
+Info: accelerometer_spi_avalon_accelerometer_spi_mode_slave_agent: "mm_interconnect_0" instantiated altera_merlin_slave_agent "accelerometer_spi_avalon_accelerometer_spi_mode_slave_agent"
+Info: accelerometer_spi_avalon_accelerometer_spi_mode_slave_agent_rsp_fifo: "mm_interconnect_0" instantiated altera_avalon_sc_fifo "accelerometer_spi_avalon_accelerometer_spi_mode_slave_agent_rsp_fifo"
+Info: router: "mm_interconnect_0" instantiated altera_merlin_router "router"
+Info: router_001: "mm_interconnect_0" instantiated altera_merlin_router "router_001"
+Info: router_002: "mm_interconnect_0" instantiated altera_merlin_router "router_002"
+Info: router_003: "mm_interconnect_0" instantiated altera_merlin_router "router_003"
+Info: router_005: "mm_interconnect_0" instantiated altera_merlin_router "router_005"
+Info: accelerometer_spi_avalon_accelerometer_spi_mode_slave_burst_adapter: "mm_interconnect_0" instantiated altera_merlin_burst_adapter "accelerometer_spi_avalon_accelerometer_spi_mode_slave_burst_adapter"
+Info: cmd_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux"
+Info: cmd_demux_001: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux_001"
+Info: cmd_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux"
+Info: cmd_mux_003: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux_003"
+Info: Reusing file C:/Users/rohan/OneDrive/Documents/ImperialYear2/InformationProcessing/CodeCracker/Hardware/CodeCracker/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "rsp_demux"
+Info: rsp_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux"
+Info: Reusing file C:/Users/rohan/OneDrive/Documents/ImperialYear2/InformationProcessing/CodeCracker/Hardware/CodeCracker/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_mux_001: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux_001"
+Info: Reusing file C:/Users/rohan/OneDrive/Documents/ImperialYear2/InformationProcessing/CodeCracker/Hardware/CodeCracker/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: accelerometer_spi_avalon_accelerometer_spi_mode_slave_rsp_width_adapter: "mm_interconnect_0" instantiated altera_merlin_width_adapter "accelerometer_spi_avalon_accelerometer_spi_mode_slave_rsp_width_adapter"
+Info: Reusing file C:/Users/rohan/OneDrive/Documents/ImperialYear2/InformationProcessing/CodeCracker/Hardware/CodeCracker/synthesis/submodules/altera_merlin_address_alignment.sv
+Info: Reusing file C:/Users/rohan/OneDrive/Documents/ImperialYear2/InformationProcessing/CodeCracker/Hardware/CodeCracker/synthesis/submodules/altera_merlin_burst_uncompressor.sv
+Info: avalon_st_adapter: "mm_interconnect_0" instantiated altera_avalon_st_adapter "avalon_st_adapter"
+Info: avalon_st_adapter_001: "mm_interconnect_0" instantiated altera_avalon_st_adapter "avalon_st_adapter_001"
+Info: error_adapter_0: "avalon_st_adapter" instantiated error_adapter "error_adapter_0"
+Info: error_adapter_0: "avalon_st_adapter_001" instantiated error_adapter "error_adapter_0"
+Info: CodeCracker: Done "CodeCracker" with 38 modules, 63 files
+Info: qsys-generate succeeded.
+Info: Finished: Create HDL design files for synthesis
