@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <sys/alt_stdio.h>
 #include <unistd.h>
-
+#include <string.h>
 
 #define OFFSET -32
 #define PWM_PERIOD 16
@@ -161,8 +161,8 @@ int main() {
     }
 
     timer_init(sys_timer_isr);
-    char response[100]; // make array for longer sequence
     int switch_datain;
+    char response[100] = "NULL\n";
     while (1) {
     	clock_t exec_t1, exec_t2;
     	exec_t1 = times(NULL);
@@ -175,14 +175,16 @@ int main() {
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response[100] = 'r';
+            printf("RIGHT-->");
+            strcpy(response, "RIGHT\n");
             //send response
         }else if(FIR_out > LEFTLIM){
             while(is_flat(FIR_out) == 0){
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response[100] = 'l';
+            printf("LEFT-->");
+            strcpy(response, "LEFT\n");
             //send response
         }
         switch_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
@@ -190,10 +192,10 @@ int main() {
 				int i = 0;
 				while (response[i] != '\0') {
 					IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
-					printf("<-> %c <->", response[100]);
 					i++;
-					usleep(10000) ;
+					usleep(30000) ;
 				}
+				printf("\nSending: %s\n", response);
 			}
 			else {
 			    usleep(50000);
