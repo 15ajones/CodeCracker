@@ -3,11 +3,16 @@
 #include "altera_avalon_timer_regs.h"
 #include "altera_avalon_timer.h"
 #include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart.h"
+#include "altera_avalon_uart_regs.h"
 #include "sys/alt_irq.h"
 #include "alt_types.h"
 #include "sys/times.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/alt_stdio.h>
+#include <unistd.h>
+
 
 #define OFFSET -32
 #define PWM_PERIOD 16
@@ -146,6 +151,8 @@ alt_32 FIR(alt_32 xn)
 
 int main() {
     //alt_32 cmd;
+    //cmd = alt_getchar();
+
     alt_32 x_read;
     alt_up_accelerometer_spi_dev * acc_dev;
     acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
@@ -154,9 +161,8 @@ int main() {
     }
 
     timer_init(sys_timer_isr);
-    //cmd = alt_getchar();
-    char response; // make array for longer sequence
-    //int count = 0;
+    char response[100]; // make array for longer sequence
+    int switch_datain;
     while (1) {
     	clock_t exec_t1, exec_t2;
     	exec_t1 = times(NULL);
@@ -169,16 +175,31 @@ int main() {
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response = 'r';
+            response[100] = 'r';
             //send response
         }else if(FIR_out > LEFTLIM){
             while(is_flat(FIR_out) == 0){
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response = 'l';
+            response[100] = 'l';
             //send response
         }
+        switch_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+			if(switch_datain &= 0b0000000001){
+				int i = 0;
+				while (response[i] != '\0') {
+					IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
+					printf("<-> %c <->", response[100]);
+					i++;
+					usleep(10000) ;
+				}
+			}
+			else {
+			    usleep(50000);
+			}
+
+        //printf("<-> %c <->", response[100]);
         //exec_t2 = times(NULL); // get system time after finishing the process
         //printf("\tTime = %d ticks \n", (int)(exec_t2-exec_t1));
         convert_read(x_read, & level, & led);
