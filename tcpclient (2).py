@@ -24,7 +24,8 @@ client_socket.connect((server_name, server_port))
 # msg = "getpass user1"
 # msg = "guesspass user1 mypassword"
 # msg = "updatepass user1 192.168.6.87 newpassword"
-msg = "getpass user1"
+# msg = "getpass user1"
+msg = add player1
 
 
 #send the message  to the udp server
