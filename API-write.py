@@ -6,8 +6,9 @@ ssl._create_default_https_context = ssl._create_unverified_context # uses unveri
 
 msg = "Correct"
 msg = msg.replace('\n', "%0A")
+field_num = 2
 
-b=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field2='+msg)
+write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+msg)
 print("\nYour message has successfully been sent!")
 
 

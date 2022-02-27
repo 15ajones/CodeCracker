@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from urllib.request import urlopen
 import json
 READ_API_KEY = "AALOIQGCNR869UZ5"
