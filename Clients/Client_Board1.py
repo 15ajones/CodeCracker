@@ -40,8 +40,6 @@ def main():
 
     while(1):
 
-       
-
         # Read Thingspeak channel for board 1  
         read_con = urlopen("http://api.thingspeak.com/channels/%s/feeds/last.json?api_key=%s" \
                             % (CHANNEL_ID,READ_API_KEY))
@@ -53,6 +51,7 @@ def main():
             print("HTTP read_conection Successfull!")
         else:
             print("HTTP read_conection Failed!")
+            break       # check
 
         data=json.loads(response)
 
@@ -98,7 +97,7 @@ def main():
         # In stop state
 
         msg = client_socket.recv(1024)
-        server_msg = msg.decode()
+        server_msg = msg.decode()    # recieves leaderboard score from server 
 
         write_msg = server_msg  # assumes server sends leaderboard number e.g 1/2/3/4
         write_msg = write_msg.replace('\n', "%0A")
