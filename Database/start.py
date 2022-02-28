@@ -1,5 +1,6 @@
 from lib2to3.pgen2.grammar import opmap_raw
 from msilib.schema import AdminExecuteSequence
+from re import X
 from unicodedata import name
 import boto3
 import socket
@@ -16,11 +17,11 @@ def create_user_table(dynamodb=None):
         TableName='Users',
         KeySchema=[
             {
-                'AttributeName': 'User',
+                'AttributeName': 'User', # the User value is the socket value of a player
                 'KeyType': 'HASH'  # Partition key
             },
             {
-                'AttributeName': 'IP',
+                'AttributeName': 'Name',
                 'KeyType': 'RANGE' # Sort key
             } 
         ],
@@ -30,7 +31,7 @@ def create_user_table(dynamodb=None):
                 'AttributeType': 'S'
             },
             {
-                'AttributeName': 'IP',
+                'AttributeName': 'Name',
                 'AttributeType': 'S'
             }
         ],
@@ -42,17 +43,16 @@ def create_user_table(dynamodb=None):
     print("created table")
     return table
 
-def add_user(user,ip,socket_addr,is_admin,dynamodb=None):
+def add_user(user,name,socket_addr,is_admin,dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('Users')
     response = table.put_item(
         Item={
             'User': user,
-            'IP' : ip,
+            'Name' : name,
             'info': {
                 'points': 0,
-                'socket_addr' : socket_addr,
                 'is_admin' : is_admin
             }
         }
@@ -60,13 +60,13 @@ def add_user(user,ip,socket_addr,is_admin,dynamodb=None):
     print("added user")
     return response
 
-def update_points(user, IP, point):#pass param is the new password
+def update_points(user, name, point):#pass param is the new password
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('Users')
     response = table.update_item(
         Key={
             'User':user,
-            'IP':IP
+            'Name':name
         },
         UpdateExpression = "set info.points=:r",
         ExpressionAttributeValues={
@@ -126,7 +126,6 @@ def main():
     game_started = False
     number_players = 0
     players = []
-    game_over = False
     while True:
         if not game_started:
             # two types of messages from client:
@@ -148,22 +147,67 @@ def main():
                 game_over = False
             else:
                 is_admin = True if number_players == 0 else False
-                add_user(cmsg[0], cadd, is_admin)
+                add_user(cadd, cmsg[0], is_admin)
                 players+=cadd
                 number_players+=1
                 cmsg = "player added"
                 server_socket.sendto(cmsg.encode(), cadd)
-        else:#game has started
-            while not game_over:
-                for player in players:
-                    if game_over:
+        else:
+            #game has started
+            #client waits until they receive the message "Your turn"
+            # Once client receives this message, they enter their move and it is sent to the server.
+            # client then sends ggrgy for example to all clients (g means right character, right place, y means right character, wrong place, r means wrong character)
+            # When game ends, the server sends all clients the message: "Game over! x wins"
+            while game_started:
+                for player in players: #go through each player's turn
+                    if not game_started:#if game has ended we can end the for loop and leave this section
                         break
                     else:
+                        cmsg = "Your turn"
+                        server_socket.sendto(cmsg.encode(), cadd)
+                        valid_reply = False
+                        while not valid_reply: #keep searching for replies until we get a 5 bit word from the player who's go it is.
+                            cmsg, cadd = server_socket.recvfrom(2048)
+                            guess = cmsg.decode()
+                            if cadd == player and len(guess) == 5:
+                                valid_reply = True
+                        guess_reply = ""
+                        correct_guess = True
+                        for i in range(5): # in this loop we derive the wordle reply to a guess
+                            if guess[i]==wordle[i]:
+                                guess_reply += "g"
+                            elif guess[i] in wordle:
+                                guess_reply += "y"
+                                correct_guess = False
+                            else:
+                                guess_reply += "r"
+                                correct_guess = False
+                        if correct_guess: # if correct guess we send a message saying game over to everyone, and end this section
+                            game_started = False
+                            cmsg = "Correct guess! Game over! Winner is: " + player
+                            for x in players:
+                                server_socket.sendto(cmsg.encode(), x)
+                            break
+                        else:
+                            for x in players:
+                                server_socket.sendto(guess_reply.encode(), x)
 
+                        
 
+                            #to do: update points after a winner - do it when working with Omar
+
+                            
+
+                        
             
-            
 
+    
+                        
+                            
+                        
+
+
+                    
     
 
             
