@@ -40,7 +40,7 @@ def create_user_table(dynamodb=None):
     print("created table")
     return table
 
-def add_user(user,ip,dynamodb=None):
+def add_user(user,ip,socket_addr,dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('Users')
@@ -49,14 +49,15 @@ def add_user(user,ip,dynamodb=None):
             'User': user,
             'IP' : ip,
             'info': {
-                'points': 0
+                'points': 0,
+                'socket_addr': socket_addr
             }
         }
     )
     print("added user")
     return response
 
-def update_password(user, IP, point):#pass param is the new password
+def update_points(user, IP, point):#pass param is the new password
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('Users')
     response = table.update_item(
@@ -72,8 +73,6 @@ def update_password(user, IP, point):#pass param is the new password
     )
     return response
 
-
-
 def query_user(user, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
@@ -87,51 +86,57 @@ def query_user(user, dynamodb=None):
     print("finished query")
 
 def delete_user_table(dynamodb=None):
-    if not dynamodb:
-        dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
+    try:
+        if not dynamodb:
+            dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
 
-    table = dynamodb.Table('Users')
-    print("deleted table")
-    table.delete()
-#add_user("omar","192...","qwerty")
-# query_user("omar")
-# delete_user_table()
-print("We're in tcp server...");
+        table = dynamodb.Table('Users')
+        print("deleted table")
+        table.delete()
+    except:
+        print("no table to delete")
 
-#select a server port
-server_port = 12000
-#create a UDP socket
-welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#bind the server to the localhost at port server_port
-welcome_socket.bind(('0.0.0.0',server_port))
+
+def main():
+    print("Server has started running")
+    delete_user_table()
+    table = create_user_table()
+    server_port = 12000
+    #create a UDP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #bind the server to the localhost at port server_port
+    server_socket.bind(('0.0.0.0',server_port))
+    #ready message
+    print('Chat server running on port ', server_port)
+
+    #Now the loop that actually listens from clients
+    #The same server socket serves all clients here
+
+    board1 = ('0.0.0.0', 11000)
+    board2 = ('0.0.0.0', 12000)
+    board3 = ('0.0.0.0', 13000)
+    board4 = ('0.0.0.0', 14000)
+    board5 = ('0.0.0.0', 15000)
+    board6 = ('0.0.0.0', 16000)
+    game_started = False
+    players=[]
+    number_players = 0
+    while True:
+        if not game_started:
+            cmsg, cadd = server_socket.recvfrom(2048)
+            cmsg = cmsg.decode()
+            if cadd
+
+
+
+
 
 #extra for tcp socket:
-welcome_socket.listen(1)
 
 #ready message
-print('Server running on port ', server_port)
 
 #Now the loop that actually listens from clients
-game_started = False
-number_players = 0
 
-while True:
-    if not game_started:
-        if number_players == 1: #numbers of players for game to start
-            game_started = True
-            wordle = 
-        else:
-            connection_socket, caddr = welcome_socket.accept()
-            # notice recv and send instead of recvto and sendto
-            cmsg = connection_socket.recv(1024)  	
-            cmsg = cmsg.decode()
-            x = cmsg.split()
-            if x[0] == "add": # adds a user : example input : add omar 112.334.5                                                                                                                                                                                                                                                                                                                               
-                add_user(x[1],x[2])
-                cmsg = "added user"
-                connection_socket.send(cmsg.encode())
-                number_players+=1
-    else:
         
             
 # to add a new device:
