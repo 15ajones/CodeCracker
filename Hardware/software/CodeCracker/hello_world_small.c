@@ -18,6 +18,9 @@
 #define PWM_PERIOD 16
 #define LEFTLIM 150
 #define RIGHTLIM -150
+#define FORWARDLIM -120 //different allowance for forward allowance
+#define BACKWARDLIM 120
+
 
 const int FLATLOW = {-60};
 const int FLATHIGH = {60};
@@ -156,6 +159,8 @@ int main() {
 	///%Accelerometer initialisations%///
 
     alt_32 x_read;
+    alt_32 y_read;
+    alt_32 z_read;
     alt_up_accelerometer_spi_dev * acc_dev;
     acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
     if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
@@ -186,12 +191,15 @@ int main() {
 
 			if(flicked_switch == 1){
 				strcat(response,"1");
+				printf("\nResponse: %s\n", response);
 			}
 			else if(flicked_switch == 2){
 				strcat(response,"2");
+				printf("\nResponse: %s\n", response);
 			}
 			else if(flicked_switch == 4){
 				strcat(response,"3");
+				printf("\nResponse: %s\n", response);
 			}
 //			else if(flicked_switch == 8){
 //				response = '4\0';
@@ -219,29 +227,59 @@ int main() {
 
 		}
 
-    	//Accelerometer code//////
+    	////Accelerometer code//////
 
     	clock_t exec_t1, exec_t2;
     	exec_t1 = times(NULL);
+
         alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-        //printf("RAW: %d\t", x_read);
-        alt_32 FIR_out;
-        FIR_out = FIR(x_read);
-        if(FIR_out < RIGHTLIM){
-            while(is_flat(FIR_out) == 0){
+        alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+        // alt_up_accelerometer_spi_read_z_axis(acc_dev, & z_read);
+        alt_32 FIR_out[3];
+        FIR_out[0] = FIR(x_read);
+        FIR_out[1] = y_read;
+        // FIR_out[2] = z_read;
+
+        //printf("FIR out x = %d \n", FIR_out[0]);
+        //printf("FIR out y = %d \n", FIR_out[1]);
+        //printf("FIR out z = %d \n", FIR_out[2]);
+
+        //Left & Right//
+
+        if(FIR_out[0] < RIGHTLIM){
+            while(is_flat(FIR_out[0]) == 0){
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-            	FIR_out = FIR(x_read);
+            	FIR_out[0] = FIR(x_read);
             }
             strcat(response, "R");
-            //printf(response);
+            printf("\nResponse: %s\n", response);
 
-        }else if(FIR_out > LEFTLIM){
-            while(is_flat(FIR_out) == 0){
+        }else if(FIR_out[0] > LEFTLIM){
+            while(is_flat(FIR_out[0]) == 0){
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-            	FIR_out = FIR(x_read);
+            	FIR_out[0] = FIR(x_read);
             }
             strcat(response, "L");
-            // printf(response);
+            printf("\nResponse: %s\n", response);
+        }
+
+        //Forward & Backward//
+
+        if(FIR_out[1] < FORWARDLIM){
+			while(is_flat(FIR_out[1]) == 0){
+				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+				FIR_out[1] = y_read;
+			}
+			strcat(response, "F");
+            printf("\nResponse: %s\n", response);
+
+		}else if(FIR_out[1] > BACKWARDLIM){
+			while(is_flat(FIR_out[1]) == 0){
+				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+				FIR_out[1] = y_read;
+			}
+			strcat(response, "B");
+            printf("\nResponse: %s\n", response);
         }
 
         ////////////////////////
@@ -271,8 +309,6 @@ int main() {
 		}
 
         //printf("<-> %c <->", response[100]);
-        //exec_t2 = times(NULL); // get system time after finishing the process
-        //printf("\tTime = %d ticks \n", (int)(exec_t2-exec_t1));
         convert_read(x_read, & level, & led);
 
 
