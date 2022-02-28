@@ -1,3 +1,5 @@
+from lib2to3.pgen2.grammar import opmap_raw
+from msilib.schema import AdminExecuteSequence
 import boto3
 import socket
 from decimal import Decimal
@@ -112,6 +114,7 @@ print('Server running on port ', server_port)
 #Now the loop that actually listens from clients
 game_started = False
 number_players = 0
+
 while True:
     if not game_started:
         if number_players == 1: #numbers of players for game to start
@@ -131,6 +134,27 @@ while True:
     else:
         
             
+# to add a new device:
+#     add player1
+
+# the first player to be added is going to be assigned admin 
+#     start player1
+
+# at each go, i receive a message asking if its my go
+# i reply "y" if its your go, else "n". if the game has ended ill send game over winner: player1
+# message will be: turn player1
+
+# player whos turn it is guesses a go:
+# guess LRLR player1
+
+
+
+
+
+
+
+
+
             
             
                 
