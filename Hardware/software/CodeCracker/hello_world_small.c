@@ -214,7 +214,6 @@ int main() {
 //			else if(flicked_switch == 512){
 //				response = '0\0';
 //			}
-		//response_array[array_call_num] = response;
 			//printf("response = %d\n", response);
 
 		}
