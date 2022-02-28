@@ -222,7 +222,6 @@ int main() {
 //			else if(flicked_switch == 512){
 //				response = '0\0';
 //			}
-		//response_array[array_call_num] = response;
 			//printf("response = %d\n", response);
 
 		}
@@ -297,7 +296,7 @@ int main() {
 			}
 			printf("\nSending: %s\n", response);
 		}
-		//receive button
+		//reset button
 		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if(button_datain &= 0b0000000010){
 			//reset response
