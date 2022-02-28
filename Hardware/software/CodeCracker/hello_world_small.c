@@ -258,7 +258,7 @@ int main() {
 			}
 			printf("\nSending: %s\n", response);
 		}
-		//receive button
+		//reset button
 		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if(button_datain &= 0b0000000010){
 			//reset response
