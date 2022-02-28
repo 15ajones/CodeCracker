@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <sys/alt_stdio.h>
 #include <unistd.h>
-
+#include <string.h>
 
 #define OFFSET -32
 #define PWM_PERIOD 16
@@ -153,6 +153,8 @@ int main() {
     //alt_32 cmd;
     //cmd = alt_getchar();
 
+	///%Accelerometer initialisations%///
+
     alt_32 x_read;
     alt_up_accelerometer_spi_dev * acc_dev;
     acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
@@ -160,10 +162,65 @@ int main() {
         return 1;
     }
 
+    ///%switches and buttons initialisation%///
     timer_init(sys_timer_isr);
-    char response[100]; // make array for longer sequence
+    int button_datain;
     int switch_datain;
+    char response[100] = "";
+    int flicked_switch;
+
+    ///Code///
     while (1) {
+
+    	///Switches code///
+     	switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
+    	switch_datain &= (0b1111111111);
+
+    	if(switch_datain != 0){
+			flicked_switch = switch_datain;
+			while(switch_datain != 0){
+				//printf("here \n");
+				switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
+				switch_datain &= (0b1111111111);
+			}
+
+			if(flicked_switch == 1){
+				strcat(response,"1");
+			}
+			else if(flicked_switch == 2){
+				strcat(response,"2");
+			}
+			else if(flicked_switch == 4){
+				strcat(response,"3");
+			}
+//			else if(flicked_switch == 8){
+//				response = '4\0';
+//			}
+//			else if(flicked_switch == 16){
+//				response = '5\0';
+//			}
+//			else if(flicked_switch == 32){
+//				response = '6\0';
+//			}
+//			else if(flicked_switch == 64){
+//				response = '7\0';
+//			}
+//			else if(flicked_switch == 128){
+//				response = '8\0';
+//			}
+//			else if(flicked_switch == 256){
+//				response = '9\0';
+//			}
+//			else if(flicked_switch == 512){
+//				response = '0\0';
+//			}
+		//response_array[array_call_num] = response;
+			//printf("response = %d\n", response);
+
+		}
+
+    	//Accelerometer code//////
+
     	clock_t exec_t1, exec_t2;
     	exec_t1 = times(NULL);
         alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
@@ -175,29 +232,43 @@ int main() {
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response[100] = 'r';
-            //send response
+            strcat(response, "R");
+            //printf(response);
+
         }else if(FIR_out > LEFTLIM){
             while(is_flat(FIR_out) == 0){
             	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
             	FIR_out = FIR(x_read);
             }
-            response[100] = 'l';
-            //send response
+            strcat(response, "L");
+            // printf(response);
         }
-        switch_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
-			if(switch_datain &= 0b0000000001){
-				int i = 0;
-				while (response[i] != '\0') {
-					IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
-					printf("<-> %c <->", response[100]);
-					i++;
-					usleep(10000) ;
-				}
+
+        ////////////////////////
+
+
+
+        //////send button///////
+        button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+		if(button_datain &= 0b0000000001){
+			int i = 0;
+			while (response[i] != '\0') {
+				IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
+				i++;
+				usleep(30000) ;
 			}
-			else {
-			    usleep(50000);
-			}
+			printf("\nSending: %s\n", response);
+		}
+		//receive button
+		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+		if(button_datain &= 0b0000000010){
+			//reset response
+			memset(response,0,strlen(response));
+			printf("Resetting...\n");
+		}
+		else {
+			usleep(50000);
+		}
 
         //printf("<-> %c <->", response[100]);
         //exec_t2 = times(NULL); // get system time after finishing the process
@@ -210,4 +281,3 @@ int main() {
 
     return 0;
 }
-
