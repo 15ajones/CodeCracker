@@ -1,10 +1,12 @@
 from lib2to3.pgen2.grammar import opmap_raw
 from msilib.schema import AdminExecuteSequence
+from unicodedata import name
 import boto3
 import socket
 from decimal import Decimal
 from pprint import pprint
 from boto3.dynamodb.conditions import Key
+from random import randrange
 
 def create_user_table(dynamodb=None):
     if not dynamodb:
@@ -40,7 +42,7 @@ def create_user_table(dynamodb=None):
     print("created table")
     return table
 
-def add_user(user,ip,socket_addr,dynamodb=None):
+def add_user(user,ip,socket_addr,is_admin,dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('Users')
@@ -50,7 +52,8 @@ def add_user(user,ip,socket_addr,dynamodb=None):
             'IP' : ip,
             'info': {
                 'points': 0,
-                'socket_addr': socket_addr
+                'socket_addr' : socket_addr,
+                'is_admin' : is_admin
             }
         }
     )
@@ -94,7 +97,7 @@ def delete_user_table(dynamodb=None):
         print("deleted table")
         table.delete()
     except:
-        print("no table to delete")
+        pass
 
 
 def main():
@@ -118,14 +121,53 @@ def main():
     board4 = ('0.0.0.0', 14000)
     board5 = ('0.0.0.0', 15000)
     board6 = ('0.0.0.0', 16000)
+    wordle_characters = ["l","r","1","2","3"]
+    wordle_length = 5
     game_started = False
-    players=[]
     number_players = 0
+    players = []
+    game_over = False
     while True:
         if not game_started:
-            cmsg, cadd = server_socket.recvfrom(2048)
+            # two types of messages from client:
+            # 1) new user joins - just sends his name
+            #     example message: user1
+            # 2) admin starts game
+            #     message: admin start
+            cmsg, cadd = server_socket.recvfrom(2048) 
             cmsg = cmsg.decode()
-            if cadd
+            cmsg = cmsg.split()
+            if len(cmsg)==2 and cmsg[0]=="admin" and cmsg[1]=="start":
+                game_started = True
+                cmsg = "game started"
+                server_socket.sendto(cmsg.encode(), cadd)
+                wordle = ""
+                for i in range(5):
+                    x = int(randrange(4))
+                    wordle+=wordle_characters[x]
+                game_over = False
+            else:
+                is_admin = True if number_players == 0 else False
+                add_user(cmsg[0], cadd, is_admin)
+                players+=cadd
+                number_players+=1
+                cmsg = "player added"
+                server_socket.sendto(cmsg.encode(), cadd)
+        else:#game has started
+            while not game_over:
+                for player in players:
+                    if game_over:
+                        break
+                    else:
+
+
+            
+            
+
+    
+
+            
+            
 
 
 
