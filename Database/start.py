@@ -126,6 +126,8 @@ def main():
     game_started = False
     number_players = 0
     players = []
+
+    
     while True:
         if not game_started:
             # two types of messages from client:
