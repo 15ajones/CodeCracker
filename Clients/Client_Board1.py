@@ -23,11 +23,11 @@ def main():
 
     #the server name and port client wishes to access
     server_name = '35.176.178.191'  # public ipv4 of ec2
-    server_port = 12000                         # change for each board
+    server_port = 11000                         # change for each board
     #create a TCP client socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind board 1 socket to port 11000
-    client_socket.bind(('', 11000))
+    client_socket.bind((server_name, server_port))
 
     #Set up a UDP read_conection
     #read_conection_socket will be assigned to this client on the server side
