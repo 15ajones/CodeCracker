@@ -3,14 +3,8 @@ from tkinter import ttk
 from tkinter import *
 import tkinter.font as font
 import socket
+import client
 
-# set up TCP link to server
-server_name = 'localhost' #insert public ipv4
-server_port = 12421
-
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((server_name, server_port))
-print('connected to server')
 
 # root window
 root = tk.Tk()
