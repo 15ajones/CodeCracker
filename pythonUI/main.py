@@ -8,7 +8,7 @@ import socket
 server_name = 'localhost' #insert public ipv4
 server_port = 12421
 
-client_socket = socket.socket(socket.AF_INET, socket.Sock_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((server_name, server_port))
 print('connected to server')
 
