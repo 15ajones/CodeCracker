@@ -3,13 +3,9 @@ from tkinter import ttk
 from tkinter import *
 import tkinter.font as font
 import socket
-<<<<<<< HEAD
 import client
-
-
-=======
 import time
->>>>>>> feb894d17457329979a27c47f11302194ccad62f
+
 # root window
 root = tk.Tk()
 root.geometry('720x480')
@@ -115,6 +111,10 @@ connectButton.place(x=20.0, y=160.0)
 
 status = Button(settings, bg='red', width="2", state=DISABLED)
 status.place(x=220.0, y=160.0)
+
+answer = client.answer
+player = client.player
+sequence = client.sequence
 
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 root.mainloop()
