@@ -91,7 +91,6 @@ def startTCP():
         status.configure(bg="red")
 
     x = threading.Thread(target=cycleTCP, args=(client_socket,), daemon=True)
-    return client_socket
 
 chkValue = tk.BooleanVar()
 chkValue = False
@@ -129,7 +128,6 @@ connectButton.place(x=20.0, y=160.0)
 status = Button(settings, bg='red', width="2", state=DISABLED)
 status.place(x=220.0, y=160.0)
 
-client_socket = startTCP()
 
 
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
