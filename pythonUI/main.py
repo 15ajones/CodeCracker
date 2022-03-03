@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import *
 import tkinter.font as font
 import socket
-import client
+import threading
 import time
 
 # root window
@@ -65,6 +65,20 @@ def setLocalHost():
         chkValue = 0
         ipVar.set("")
 
+def cycleTCP (client_socket) : 
+    answer = ' '
+    player = ' '
+    sequence = ' '
+
+    while True : 
+        if client_socket.recv(1024).decode == 'end' :
+            break
+        player = client_socket.recv(1024).decode()
+        sequence = client_socket.recv(1024).decode()
+    client_socket.close()
+    
+    
+
 def startTCP():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -75,6 +89,9 @@ def startTCP():
     except:
         TCPError.configure(fg="red", text="Failed to Connect")
         status.configure(bg="red")
+
+    x = threading.Thread(target=cycleTCP, args=(client_socket,), daemon=True)
+    return client_socket
 
 chkValue = tk.BooleanVar()
 chkValue = False
@@ -112,9 +129,8 @@ connectButton.place(x=20.0, y=160.0)
 status = Button(settings, bg='red', width="2", state=DISABLED)
 status.place(x=220.0, y=160.0)
 
-answer = client.answer
-player = client.player
-sequence = client.sequence
+client_socket = startTCP()
+
 
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 root.mainloop()
