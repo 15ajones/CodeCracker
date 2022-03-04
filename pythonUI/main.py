@@ -33,14 +33,17 @@ tab.add(settings, text='Settings')
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
 
 def start_game1() : 
+    global player_label
+    global colour_sequence
+
     game_window = tk.Tk()
     game_window.geometry('720x480')
     game_window.title('Wordle')
 
-    player_label = Label(game_window, text=player)
+    player_label.config(master=game_window)
     player_label.place(x=20, y=20)
 
-    colour_sequence = Label(game_window, text=sequence)
+    colour_sequence.config(master=game_window)
     colour_sequence.place(x=20, y=50)
     game_window.mainloop()
 
@@ -84,11 +87,17 @@ def cycleTCP (client_socket) :
     print('cycle begin')
     global player
     global sequence
+    global player_label
+    global colour_sequence
     while True : 
 
         received = (client_socket.recv(1024).decode()).split(',')
         player = received[0]
+        if player_label != None :
+            player_label.config(text=player)
         sequence = received[1]
+        if colour_sequence != None :
+            colour_sequence.config(text=sequence)
         if received[0] == 'end' :
             break
     client_socket.close()

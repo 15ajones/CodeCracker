@@ -1,8 +1,9 @@
 import socket
+import time
 print("We're in tcp server...");
 
 #select a server port
-server_port = 12721
+server_port = 12821
 #create a UDP socket
 welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #bind the server to the localhost at port server_port
@@ -19,6 +20,10 @@ while True:
     connection_socket, caddr = welcome_socket.accept()
     #notice recv and send instead of recvto and sendto
     cmsg = "play,seq"
+    connection_socket.send(cmsg.encode())
+
+    time.sleep(300)
+    cmsg = "nice,one"
     connection_socket.send(cmsg.encode())
     
 
