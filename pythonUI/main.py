@@ -6,6 +6,9 @@ import socket
 import threading
 import time
 
+player = 'player'
+sequence = 'sequence'
+
 # root window
 root = tk.Tk()
 root.geometry('720x480')
@@ -29,8 +32,20 @@ tab.add(settings, text='Settings')
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
 
+def start_game1() : 
+    game_window = tk.Tk()
+    game_window.geometry('720x480')
+    game_window.title('Wordle')
+
+    player_label = Label(game_window, text=player)
+    player_label.place(x=20, y=20)
+
+    colour_sequence = Label(game_window, text=sequence)
+    colour_sequence.place(x=20, y=50)
+    game_window.mainloop()
+
 # these buttons have been added to 'gameSelection tab'
-Button(gameSelection, text="Game 1", height="32", width="32", bg='red', fg='white', font=buttonFont).pack(padx=5,
+Button(gameSelection, text="Game 1", height="32", width="32", bg='red', fg='white', font=buttonFont, command=start_game1).pack(padx=5,
                                                                                                           pady=15,
                                                                                                           side=tk.LEFT)
 Button(gameSelection, text="Game 2", height="32", width="32", bg='green', fg='white', font=buttonFont).pack(padx=5,
@@ -66,15 +81,16 @@ def setLocalHost():
         ipVar.set("")
 
 def cycleTCP (client_socket) : 
-    answer = ' '
-    player = ' '
-    sequence = ' '
-
+    print('cycle begin')
+    global player
+    global sequence
     while True : 
-        if client_socket.recv(1024).decode == 'end' :
+
+        received = (client_socket.recv(1024).decode()).split(',')
+        player = received[0]
+        sequence = received[1]
+        if received[0] == 'end' :
             break
-        player = client_socket.recv(1024).decode()
-        sequence = client_socket.recv(1024).decode()
     client_socket.close()
     
     
@@ -91,6 +107,8 @@ def startTCP():
         status.configure(bg="red")
 
     x = threading.Thread(target=cycleTCP, args=(client_socket,), daemon=True)
+    x.start()
+    print('thread has begun')
 
 chkValue = tk.BooleanVar()
 chkValue = False
@@ -127,6 +145,8 @@ connectButton.place(x=20.0, y=160.0)
 
 status = Button(settings, bg='red', width="2", state=DISABLED)
 status.place(x=220.0, y=160.0)
+
+#turn = Label()
 
 
 
