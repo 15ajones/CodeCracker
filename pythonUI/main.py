@@ -5,6 +5,10 @@ import tkinter.font as font
 import subprocess
 import threading
 import socket
+import sys
+
+server_name = "localhost"
+server_port = 12000
 
 # root window
 root = tk.Tk()
@@ -29,17 +33,6 @@ tab.add(settings, text='Settings')
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
 
-# these buttons have been added to 'gameSelection tab'
-Button(gameSelection, text="Game 1", height="32", width="32", bg='red', fg='white', font=buttonFont).pack(padx=5,
-                                                                                                          pady=15,
-                                                                                                          side=tk.LEFT)
-Button(gameSelection, text="Game 2", height="32", width="32", bg='green', fg='white', font=buttonFont).pack(padx=5,
-                                                                                                            pady=15,
-                                                                                                            side=tk.LEFT)
-Button(gameSelection, text="Game 3", height="32", width="32", bg='blue', fg='white', font=buttonFont).pack(padx=5,
-                                                                                                           pady=15,
-                                                                                                           side=tk.LEFT)
-
 
 # number checking
 def only_numbers(char):
@@ -54,28 +47,53 @@ def only_numbers(char):
 validation = settings.register(only_numbers)
 
 def changeText():
+    global server_name, server_port
     TCPValues.config(text="TCP Set: " + ipAddressEntry.get() + ":" + portEntry.get())
+    server_name = ipAddressEntry.get()
+    server_port = int(portEntry.get())
 
 def setLocalHost():
     global chkValue
+    global server_name
     if chkValue == 0:
         ipVar.set("localhost")
+        server_name = "localhost"
         chkValue = 1
     else:
         chkValue = 0
         ipVar.set("")
 
 def startTCP():
-    print("started TCP")
-    command = ["python", "-u", "tcpclient.py", "localhost", "12000"]
-    tcp = subprocess.Popen(command, stdout=subprocess.PIPE)
-    while True:
-        output = tcp.stdout.readline()
-        if output == '' or tcp.poll() is not None:
-            break
-        else:
-            print(output.decode())
 
+    name = server_name
+    port = server_port
+
+    print("We're in tcp client...");
+
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((name, port))
+
+    game1 = tk.Tk()
+    game1.geometry('720x480')
+    game1.title('Master Mind')
+
+    TCPDataLabel = Label(game1, text="Waiting for incoming data...")
+    TCPDataLabel.place(x=20.0, y=80.0)
+    game1.update()
+    
+
+    #threading.Thread(target=masterMind).start()
+    while True:
+        print("waiting...")
+        msg = "ping"
+        client_socket.send(msg.encode())
+        message = client_socket.recv(1024)
+        print(message.decode())
+        TCPDataLabel['text']=message
+        game1.update()
+
+    client_socket.close()
+    
 
 
 chkValue = tk.BooleanVar()
@@ -84,9 +102,6 @@ chkValue = False
 TCPTitle = Label(settings, text="Enter IP & Port")
 TCPTitle.place(x=20.0, y=10.0)
 
-TCPError = Label(settings, text="", fg="red")
-TCPError.place(x=250.0, y=162.0)
-
 ipVar = tk.StringVar()
 ipName = Label(settings, text="IP")
 ipName.place(x=20.0, y=40.0)
@@ -94,7 +109,7 @@ ipAddressEntry = Entry(settings, textvariable=ipVar, validate="key", validatecom
 ipAddressEntry.place(x=80.0, y=40.0)
 
 localhost = Checkbutton(settings, text = "localhost", command=setLocalHost, var=chkValue)
-localhost.place(x=220.0, y=38.0)
+localhost.place(x=280.0, y=40.0)
 
 portVar = tk.StringVar()
 portName = Label(settings, text="Port")
@@ -103,16 +118,17 @@ portEntry = Entry(settings, textvariable=portVar, validate="key", validatecomman
 portEntry.place(x=80.0, y=80.0)
 
 TCPValues = Label(settings, text="TCP Set: 0.0.0.0: 00000")
-TCPValues.place(x=20.0, y=200.0)
+TCPValues.place(x=20.0, y=170.0)
 
 saveButton = Button(settings, text="Save", command=changeText, height="1", width="25")
 saveButton.place(x=20.0, y=120.0)
 
-connectButton = Button(settings, text="CONNECT", command=threading.Thread(target=startTCP).start, height="1", width="25")
-connectButton.place(x=20.0, y=160.0)
+connectTCP = threading.Thread(target=startTCP)
+# these buttons have been added to 'gameSelection tab'
+Button(gameSelection, text="MasterMind", command=connectTCP.start, height="32", width="32", bg='red', fg='black', font=buttonFont).pack(padx=5, pady=15, side=tk.LEFT)
+Button(gameSelection, text="Game 2", height="32", width="32", bg='green', fg='black', font=buttonFont).pack(padx=5, pady=15, side=tk.LEFT)
+Button(gameSelection, text="Game 3", height="32", width="32", bg='blue', fg='black', font=buttonFont).pack(padx=5, pady=15, side=tk.LEFT)
 
-status = Button(settings, bg='red', width="2", state=DISABLED)
-status.place(x=220.0, y=160.0)
 
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 root.mainloop()

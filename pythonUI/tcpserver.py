@@ -1,3 +1,4 @@
+from cgi import test
 import socket
 import time
 print("We're in tcp server...");
@@ -11,13 +12,13 @@ print('Server running on port ', server_port)
 
 connection_socket, caddr = welcome_socket.accept()
 
+count = 0
 while True:
     client_msg = connection_socket.recv(1024)
     client_msg = client_msg.decode()
     if client_msg == "ping":
-        server_msg = "Player Data"
-        connection_socket.send(server_msg.encode())
-    else:
-        pass
-    print("cycle")
+        test_input = str(count)
+        connection_socket.send(test_input.encode())
+    count += 1
+    time.sleep(0.5)
 
