@@ -92,10 +92,10 @@ def main():
             write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
             print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
 
-
         # Check for game over status
         msg = client_socket.recvfrom(1024)
         gameover_status = msg.decode()
+
 
 
 

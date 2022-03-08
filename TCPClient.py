@@ -9,8 +9,8 @@ import os.path
 print("We're in tcp client...");
 
 #the server name and port client wishes to access
-server_name = '35.176.178.191'  #ipv4 of ec2
-server_port = 12000
+server_name = '192.168.59.153'  #ipv4 of ec2
+server_port = 11000
 #create a TCP client socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -28,8 +28,10 @@ client_socket.connect((server_name, server_port))
 msg = "add player1"
 
 
+
 #send the message  to the udp server
 client_socket.send(msg.encode())
+print("sent message")
 
 #return values from the server
 msg = client_socket.recv(1024)
