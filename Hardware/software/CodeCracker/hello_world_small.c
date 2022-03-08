@@ -171,7 +171,7 @@ int main() {
     timer_init(sys_timer_isr);
     int button_datain;
     int switch_datain;
-    char response[100] = "";
+    char response[100];
     int flicked_switch;
 
     ///Code///
@@ -282,19 +282,18 @@ int main() {
         }
 
         ////////////////////////
-
-
-
         //////send button///////
         button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if(button_datain &= 0b0000000001){
+			strcat(response, "\n");
 			int i = 0;
-			while (response[i] != '\0') {
+			while (response[i] != '\0'){
 				IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
 				i++;
-				usleep(30000) ;
+				usleep(10000) ;
 			}
 			printf("\nSending: %s\n", response);
+			memset(response,0,strlen(response));
 		}
 		//reset button
 		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
@@ -316,3 +315,6 @@ int main() {
 
     return 0;
 }
+
+
+
