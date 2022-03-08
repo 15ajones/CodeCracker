@@ -10,7 +10,6 @@ boolean newData = false;
 //WIFI initialising
 int port = 11000; //Port number --- CHANGES DEPENDING ON BOARD
 WiFiServer server(port);
-int index = 0;
 char buffer[1000];
 
 //Server connect to WiFi Network
@@ -58,6 +57,7 @@ void setup() {
 void loop() {
     recvWithEndMarker();
     showNewData();
+    int index = 0;
 
     WiFiClient client = server.available();
     if (client) {
@@ -76,13 +76,13 @@ void loop() {
             index++;
             buffer[index] = '\0';
           }
-          if(client_response == "your turn"){
+          if(strcmp(buffer,"your turn")){
             //writing to serial monitor the "your turn"
             Serial.write(client.read());
             //sending FPGA response to client (receivedChars contains this)
             client.write(receivedChars);
             //output what i sent
-            Serial.write("Sent message" + receivedChars);
+            Serial.write(strcat("Sent message:", receivedChars));
             //receive the passcheckers response
             Serial.write(client.read());
           }
