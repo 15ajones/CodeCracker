@@ -1,10 +1,11 @@
+from ctypes import sizeof
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 import tkinter.font as font
 import threading
 import sys
-
+from xml.etree.ElementPath import get_parent_map
 
 server_name = "localhost"
 server_port = 12000
@@ -12,7 +13,7 @@ message = ""
 
 # root window
 root = tk.Tk()
-root.geometry('720x480')
+root.geometry('720x720')
 root.title('InfoProc')
 style = ttk.Style()
 style.layout('TNotebook.Tab', [])
@@ -69,7 +70,7 @@ def inputListen():
 
         if message == "select":
             if b1['relief'] == SOLID:
-                threadGameOne = threading.Thread(target=startGameOne)
+                threadGameOne = threading.Thread(target=startGameOne, daemon=True)
                 threadGameOne.start()
             elif b2['relief'] == SOLID:
                 print("start game 2")
@@ -80,20 +81,46 @@ def inputListen():
             tab.select(gameSelection)
 
 
-
-
-
-
 def startGameOne():
     tab.select(game1Tab)
     global message
 
-    DataLabel = Label(game1Tab, text="[INPUT]: ")
-    DataLabel.place(x=20.0, y=20.0)
+    playerlabel = Label(game1Tab, text="[INPUT]: ")
+    playerlabel.place(x=20.0, y=20.0)
+
+    outcomelabel = Label(game1Tab, text="[OUTCOME]")
+    outcomelabel.place(x=20.0, y = 40.0)
     game1Tab.update()
 
+
+
+
     while True:
-        DataLabel['text'] = "[INPUT]: " + message
+        if message != "" : 
+            x = message.split()
+            if x[0] == "turn" :
+                playerlabel['text'] = x[1]
+            if x[0] == "outcome" :
+                outcomelabel['text'] = x[1]
+            if x[0] == "outcome" :
+                colours = ['','','','','']
+                for i in range(len(colours)) :
+                    if x[1][i] == 'g' :
+                        colours[i] = 'green'
+                    if x[1][i] == 'y' :
+                        colours[i] = 'yellow'
+                    if x[1][i] == 'r' :
+                        colours[i] = 'red'
+
+                canvas = tk.Canvas(game1Tab, height=80, width=480)
+
+                canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
+                canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
+                canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
+                canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
+                canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
+
+                canvas.pack(side='left')
         game1Tab.update()
 
 
@@ -111,3 +138,31 @@ Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.sel
 listener = threading.Thread(target=inputListen)
 listener.start()
 root.mainloop()
+
+# types of inputs:
+
+# in the home screen 
+# --------------------------
+# play mastermind -> this is the only command we will have when at the homescreen
+
+
+
+# in the mastermind
+# ---------------------------
+# turn user1 -> screen shows who's go it is (user1)
+
+# outcome ggrgy -> show below the user's name what their guess was:
+
+# turn user2 -> screen shows that its not user2s go 
+
+# game over winner user 2 -> briefly show that the game has ended (show all 5 green), as well as the winner (for 5 seconds, then go back to homescreen) 
+
+# x = input("new input please")
+# x_array = x.split()
+# if we're in the home screen
+# if x_array[0]= play and x_array[1] = mastermind
+
+
+# when in the game
+
+# display(x_array[1])
