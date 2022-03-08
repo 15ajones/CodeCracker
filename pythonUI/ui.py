@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import *
 import tkinter.font as font
 import threading
+import sys
 
 
 server_name = "localhost"
@@ -35,15 +36,20 @@ buttonFont = font.Font(family='Arial', weight="bold", size=8)
 def inputListen():
     global message
     while True:
-        message = input("[INPUT]: ")
-
+        print("[INPUT]:", end=' ')
+        sys.stdout.flush()
+        message = sys.stdin.readline().rstrip()
         if message == "right":
             if b1['relief'] == SOLID:
                 b2['relief'] = SOLID
                 b1['relief'] = GROOVE
+                b1['fg'] = "black"
+                b2['fg'] = "red"
             elif b2['relief'] == SOLID:
                 b3['relief'] = SOLID
                 b2['relief'] = GROOVE
+                b2['fg'] = "black"
+                b3['fg'] = "red"
             else:
                 print("bad move")
 
@@ -51,9 +57,13 @@ def inputListen():
             if b2['relief'] == SOLID:
                 b1['relief'] = SOLID
                 b2['relief'] = GROOVE
+                b2['fg'] = "black"
+                b1['fg'] = "red"
             elif b3['relief'] == SOLID:
                 b2['relief'] = SOLID
                 b3['relief'] = GROOVE
+                b3['fg'] = "black"
+                b2['fg'] = "red"
             else:
                 print("bad move")
 
@@ -88,7 +98,7 @@ def startGameOne():
 
 
 # these buttons have been added to 'gameSelection tab'
-b1 = Button(gameSelection, text="MasterMind", command=lambda: startGameOne(), height="32", width="32", fg='black', font=buttonFont, relief=SOLID)
+b1 = Button(gameSelection, text="MasterMind", command=lambda: startGameOne(), height="32", width="32", fg='red', font=buttonFont, relief=SOLID)
 b1.pack(padx=5, pady=15, side=tk.LEFT)
 b2 = Button(gameSelection, text="Game 2", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b2.pack(padx=5, pady=15, side=tk.LEFT)
