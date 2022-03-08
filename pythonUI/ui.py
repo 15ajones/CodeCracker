@@ -59,11 +59,15 @@ def inputListen():
 
         if message == "select":
             if b1['relief'] == SOLID:
-                startGameOne()
+                threadGameOne = threading.Thread(target=startGameOne)
+                threadGameOne.start()
             elif b2['relief'] == SOLID:
                 print("start game 2")
             else:
                 print("start game 3")
+
+        if message == "menu":
+            tab.select(gameSelection)
 
 
 
