@@ -79,6 +79,8 @@ def inputListen():
 
         if message == "menu":
             tab.select(gameSelection)
+        if message == "exit" :
+            exit()
 
 
 def startGameOne():
@@ -90,6 +92,8 @@ def startGameOne():
 
     outcomelabel = Label(game1Tab, text="[OUTCOME]")
     outcomelabel.place(x=20.0, y = 40.0)
+
+    canvas = tk.Canvas(game1Tab, height=80, width=480)
     game1Tab.update()
 
 
@@ -112,7 +116,8 @@ def startGameOne():
                     if x[1][i] == 'r' :
                         colours[i] = 'red'
 
-                canvas = tk.Canvas(game1Tab, height=80, width=480)
+                
+                canvas.delete('all')
 
                 canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
                 canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
