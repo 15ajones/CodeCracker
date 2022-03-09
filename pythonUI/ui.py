@@ -33,6 +33,7 @@ tab.add(gameSelection, text='Game Selection')
 tab.add(game1Tab, text='Game 1')
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
+textFont = font.Font(family='Arial', weight="bold", size=16)
 
 def inputListen():
     global message
@@ -85,25 +86,21 @@ def startGameOne():
     tab.select(game1Tab)
     global message
 
-    playerlabel = Label(game1Tab, text="[INPUT]: ")
-    playerlabel.place(x=20.0, y=20.0)
+    playerlabel = Label(game1Tab, text="READY", fg='black', font=textFont)
+    playerlabel.place(x=360.0, y=20.0, anchor="center")
 
-    outcomelabel = Label(game1Tab, text="[OUTCOME]")
-    outcomelabel.place(x=20.0, y = 40.0)
+    canvas = tk.Canvas(game1Tab, height=80, width=480)
+    colours = ['white','white','white','white','white']
+
+    canvas.place(x=120 , y=200)
     game1Tab.update()
-
-
-
 
     while True:
         if message != "" : 
             x = message.split()
             if x[0] == "turn" :
-                playerlabel['text'] = x[1]
+                playerlabel['text'] = "Player " + x[1] + "'s Turn!"
             if x[0] == "outcome" :
-                outcomelabel['text'] = x[1]
-            if x[0] == "outcome" :
-                colours = ['','','','','']
                 for i in range(len(colours)) :
                     if x[1][i] == 'g' :
                         colours[i] = 'green'
@@ -111,16 +108,13 @@ def startGameOne():
                         colours[i] = 'yellow'
                     if x[1][i] == 'r' :
                         colours[i] = 'red'
-
-                canvas = tk.Canvas(game1Tab, height=80, width=480)
-
-                canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
-                canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
-                canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
-                canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
-                canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
-
-                canvas.pack(side='left')
+            canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
+            canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
+            canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
+            canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
+            canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
+            message = ""
+            print(colours)
         game1Tab.update()
 
 
@@ -132,7 +126,7 @@ b2.pack(padx=5, pady=15, side=tk.LEFT)
 b3 = Button(gameSelection, text="Game 3", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b3.pack(padx=5, pady=15, side=tk.LEFT)
 
-Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=400.0)
+Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=450.0)
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 
 listener = threading.Thread(target=inputListen)
