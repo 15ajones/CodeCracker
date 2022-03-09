@@ -126,6 +126,9 @@ def startGameOne():
                 canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
 
                 canvas.pack(side='left')
+            if x[0] == "game" :
+                playerlabel['text'] = 'The winner is: ' + x[3]
+                #tab.select(gameSelection)
         game1Tab.update()
 
 
@@ -148,7 +151,9 @@ root.mainloop()
 
 # in the home screen 
 # --------------------------
-# play mastermind -> this is the only command we will have when at the homescreen
+# left -> select box to the left of current selection
+# right -> select box to the right of current selection
+# select -> start currently selected game
 
 
 
@@ -156,18 +161,13 @@ root.mainloop()
 # ---------------------------
 # turn user1 -> screen shows who's go it is (user1)
 
-# outcome ggrgy -> show below the user's name what their guess was:
+# outcome ggrgy -> displays the colour mapping for the users guess
 
-# turn user2 -> screen shows that its not user2s go 
+# turn user2 -> screen shows that its now user2s go 
 
-# game over winner user 2 -> briefly show that the game has ended (show all 5 green), as well as the winner (for 5 seconds, then go back to homescreen) 
+# game over winner user2 -> display that the winner is user2
 
-# x = input("new input please")
-# x_array = x.split()
-# if we're in the home screen
-# if x_array[0]= play and x_array[1] = mastermind
+# menu -> back to game selection menu
 
 
-# when in the game
 
-# display(x_array[1])
