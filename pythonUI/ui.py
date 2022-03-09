@@ -108,13 +108,13 @@ def startGameOne():
                         colours[i] = 'yellow'
                     if x[1][i] == 'r' :
                         colours[i] = 'red'
-            canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
-            canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
-            canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
-            canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
-            canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
-            message = ""
-            print(colours)
+                canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
+                canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
+                canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
+                canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
+                canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
+                message = ""    # need to clear message else it loops infinitely back to outcome
+                #print(canvas.find_all())    # prints all canvas items active
         game1Tab.update()
 
 
