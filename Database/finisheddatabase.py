@@ -94,7 +94,6 @@ def delete_user_table(dynamodb=None):
     except:
         pass
 
-
 def main():
     print("Server has started running")
     # delete_user_table()
@@ -201,8 +200,8 @@ def main():
 
                         
 
-                            #to do: update points after a winner - do it when working with Omar
-
+                            
+#to do: update points after a winner - do it when working with Omar
 
 if __name__ == "__main__":
     main()
