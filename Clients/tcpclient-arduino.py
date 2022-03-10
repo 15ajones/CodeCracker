@@ -22,7 +22,9 @@ msg = "admin"
 client_socket.send(msg.encode())
 print("sent" + msg)
 
-while(game_over):
+game_over = input("Game Over? ") #y is go
+
+while(game_over == "y"):
 
     msg = "your turn"
     client_socket.send(msg.encode())
@@ -37,7 +39,7 @@ while(game_over):
     client_socket.send(msg.encode())
     print("sent" + msg)
 
-    game_over = input("Game Over? ")
+    game_over = input("Game Over? ") #y is go
 
 
 
