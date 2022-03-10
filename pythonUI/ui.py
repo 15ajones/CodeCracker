@@ -33,6 +33,7 @@ tab.add(gameSelection, text='Game Selection')
 tab.add(game1Tab, text='Game 1')
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
+textFont = font.Font(family='Arial', weight="bold", size=16)
 
 def inputListen():
     global message
@@ -70,7 +71,7 @@ def inputListen():
 
         if message == "select":
             if b1['relief'] == SOLID:
-                threadGameOne = threading.Thread(target=startGameOne)
+                threadGameOne = threading.Thread(target=startGameOne, daemon=True)
                 threadGameOne.start()
             elif b2['relief'] == SOLID:
                 print("start game 2")
@@ -87,16 +88,11 @@ def startGameOne():
     tab.select(game1Tab)
     global message
 
-    playerlabel = Label(game1Tab, text="")
-    playerlabel.place(x=20.0, y=20.0)
-
-    #outcomelabel = Label(game1Tab, text="[OUTCOME]")
-    #outcomelabel.place(x=20.0, y = 40.0)
+    playerlabel = Label(game1Tab, text="READY", fg='black', font=textFont)
+    playerlabel.place(x=320.0, y=20.0, anchor="center")
 
     canvas = tk.Canvas(game1Tab, height=80, width=480)
-    game1Tab.update()
-
-
+    colours = ['white','white','white','white','white']
 
     while True:
         if message != "" : 
@@ -120,20 +116,15 @@ def startGameOne():
                         colours[i] = 'yellow'
                     elif x[1][i] == 'r' :
                         colours[i] = 'red'
-
-                
-                #canvas.delete('all')
-
                 canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
                 canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
                 canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
                 canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
                 canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
+                message = ""    # need to clear message else it loops infinitely back to outcome
 
-                canvas.pack(side='left')
-            if x[0] == "game" :
-                playerlabel['text'] = 'The winner is: ' + x[3]
-                #tab.select(gameSelection)
+                canvas.pack(side='bottom')
+                #print(canvas.find_all())    # prints all canvas items active
         game1Tab.update()
 
 
@@ -145,7 +136,7 @@ b2.pack(padx=5, pady=15, side=tk.LEFT)
 b3 = Button(gameSelection, text="Game 3", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b3.pack(padx=5, pady=15, side=tk.LEFT)
 
-Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=400.0)
+Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=450.0)
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 
 listener = threading.Thread(target=inputListen)
