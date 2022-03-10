@@ -70,7 +70,7 @@ def inputListen():
 
         if message == "select":
             if b1['relief'] == SOLID:
-                threadGameOne = threading.Thread(target=startGameOne, daemon=True)
+                threadGameOne = threading.Thread(target=startGameOne)
                 threadGameOne.start()
             elif b2['relief'] == SOLID:
                 print("start game 2")
@@ -87,37 +87,42 @@ def startGameOne():
     tab.select(game1Tab)
     global message
 
-    playerlabel = Label(game1Tab, text="[INPUT]: ")
+    playerlabel = Label(game1Tab, text="")
     playerlabel.place(x=20.0, y=20.0)
 
-    outcomelabel = Label(game1Tab, text="[OUTCOME]")
-    outcomelabel.place(x=20.0, y = 40.0)
+    #outcomelabel = Label(game1Tab, text="[OUTCOME]")
+    #outcomelabel.place(x=20.0, y = 40.0)
 
     canvas = tk.Canvas(game1Tab, height=80, width=480)
     game1Tab.update()
 
 
 
-
     while True:
         if message != "" : 
             x = message.split()
-            if x[0] == "turn" :
+
+            if x[0] == "menu" :
+                canvas.delete('all')
+                playerlabel['text'] = ""
+
+            elif x[0] == "turn" :
+                playerlabel['text'] = ""
                 playerlabel['text'] = x[1]
-            if x[0] == "outcome" :
-                outcomelabel['text'] = x[1]
-            if x[0] == "outcome" :
+            #if x[0] == "outcome" :
+                #outcomelabel['text'] = x[1]
+            elif x[0] == "outcome" :
                 colours = ['','','','','']
                 for i in range(len(colours)) :
                     if x[1][i] == 'g' :
                         colours[i] = 'green'
-                    if x[1][i] == 'y' :
+                    elif x[1][i] == 'y' :
                         colours[i] = 'yellow'
-                    if x[1][i] == 'r' :
+                    elif x[1][i] == 'r' :
                         colours[i] = 'red'
 
                 
-                canvas.delete('all')
+                #canvas.delete('all')
 
                 canvas.create_rectangle(5,5,80,80, fill=colours[0], outline=colours[0])
                 canvas.create_rectangle(100,5,180,80, fill=colours[1], outline=colours[1])
