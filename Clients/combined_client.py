@@ -2,187 +2,118 @@ import socket
 import subprocess
 import time
 import socket
+import sys, platform
+import ctypes, ctypes.util
+import os.path
 
 
 def main():
 
     #the server name and port client wishes to access
+    board_server_name = '192.168.73.153'  #ip of arduino (subject to change - fetch from serial monitor)
+    board_server_port = 11000
+    #create a TCP client socket
+    board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #binding to a port and address so that the server can send information back
+    board_client_socket.bind(('', 15000))
+
+    #the server name and port client wishes to access
     server_name = '35.176.178.191'  # public ipv4 of ec2
     server_port = 12000                        
     #create a TCP client socket
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind board 1 socket to port 11000
-    client_socket.bind(('', 11000))  # change port for each board
+    ec2_client_socket.bind(('', 11000))  # change port for each board
 
     print("Running UDP client for board 1...");
 
 
-    #Set up a UDP read_conection
-    #read_conection_socket will be assigned to this client on the server side
-    #client_socket.read_conect((server_name, server_port))
-
     # Add user/player to database
     msg = "board1"
-    client_socket.sendto(str.encode(msg), (server_name, server_port))
+    ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
 
     msg = "Am I admin?"
-    client_socket.sendto(str.encode(msg), (server_name, server_port))
+    ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
 
-    msg = client_socket.recvfrom(1024)
+    msg = ec2_client_socket.recvfrom(1024)
     server_msg = msg.decode()
 
     
     if (server_msg=="y"):
         #  To Do: send "admin" to arduino
-    
+        
+        #1 is admin, 0 is player.
+        msg = "1"
+        board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
+        print("sent to board: " + msg)
+
+
         # Send admin start to EC2 server to start game
         msg = "admin start"
-        client_socket.sendto(str.encode(msg), (server_name, server_port))
+        ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
 
+
+    r = 0 # keeps track of round number during game
 
     while(gameover_status != "game over"):
 
-        # Read Thingspeak channel for board 1  
-        read_con = urlopen("http://api.thingspeak.com/channels/%s/feeds/last.json?api_key=%s" \
-                            % (CHANNEL_ID,READ_API_KEY))
-        
-        response = read_con.read()
-        http_status_code = read_con.getcode()
+        # Increment round number at start of round
+        r += 1
+        print("Round " + r)
 
-        if (http_status_code == 200):
-            print("HTTP read_conection Successfull!")
-        else:
-            print("HTTP read_conection Failed!")
-            break       # check
-
-        # Send message to server asking if it is player's turn:
-        msg = "Is it my turn?"
-        client_socket.sendto(str.encode(msg), (server_name, server_port))
+        # Send message to server asking if it is player's turn: 
+        # msg = "Is it my turn?"
+        # ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
         
-        # Receive reply from server  
-        msg = client_socket.recvfrom(1024)
-        confirm_turn_msg = msg.decode()
+        # Receive reply from server if your turn 
+        server_msg = ec2_client_socket.recvfrom(1024)
+        confirm_turn_msg = server_msg.decode()
         
         if ( confirm_turn_msg == "Your turn" ):
 
-            # Load field 1 (inputpass) data from ThingSpeak channel
-            data=json.loads(response)
-            input_pass = data['field1']                         # read field 1 - inputted password from board
+            # Send message to board: your turn
+            board_msg = "your turn"
+            board_client_socket.sendto(board_msg.encode(), (board_server_name, board_server_port))
+            print("sent: " + board_msg)
+
+            # receive input passcode from board
+            inputpass_msg = board_client_socket.recv(1024)
+            print("received code: " + inputpass_msg.decode())
 
             # Send inputted passcode from board to server
-            msg = input_pass  
-            client_socket.sendto(str.encode(msg), (server_name, server_port))
-
-            msg = client_socket.recvfrom(1024)                  # receive g/y/r sequence (passchecker) for inputted pass
-            pass_checker = msg.decode()
-            
-            # Send passchecker sequence to thingspeak channel to be read by board:
-            write_msg = pass_checker
-            write_msg = write_msg.replace('\n', "%0A")
-            field_num = "2"                                     # field2: passchecker
-            write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
-            print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
+            server_msg = inputpass_msg  
+            ec2_client_socket.sendto(str.encode(server_msg), (server_name, server_port))
 
         # Check for game over status
-        msg = client_socket.recvfrom(1024)
-        gameover_status = msg.decode()
+        gameover_msg = ec2_client_socket.recvfrom(1024)
+        gameover_status = gameover_msg.decode()
 
 
 
+    # In stop state -> send game over to board + leaderboard retrieval
 
-    # In stop state -> leaderboard retrieval
+    # Send game over message to board
+    board_msg = "game over"
+    board_client_socket.sendto(board_msg.encode(), (board_server_name, board_server_port))
+    print("sent" + board_msg)
 
-    msg = client_socket.recv(1024)
-    server_msg = msg.decode()                       # recieves leaderboard score from server 
+    # Recieves leaderboard position from server 
+    server_msg = ec2_client_socket.recv(1024)
+    server_leaderboard_msg = server_msg.decode()                      
 
-    write_msg = server_msg                          # assumes server sends leaderboard number e.g 1/2/3/4
-    write_msg = write_msg.replace('\n', "%0A")
-    field_num = "4"                                 # field4: leaderboard
+    # Send leaderboard position to board    
+    board_msg = server_leaderboard_msg
+    board_client_socket.sendto(board_msg.encode(), (board_server_name, board_server_port))
+    print("sent" + board_msg)
 
-    write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
-    print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
-
-        
 
     # Remove board1 from database
     msg = "remove board1"                           # need to implement in udp server
-    client_socket.send(msg.encode())
+    ec2_client_socket.sendto(str.encode(server_msg), (server_name, server_port))
 
     # Close UDP socket
-    client_socket.close()
-    # Close ThingSpeak channel
-    read_con.close() 
-    write_con.close()
-
-
-
-
-
-
-
-
-    # while(1):
-
-    #     # Read Thingspeak channel for board 1  
-    #     read_con = urlopen("http://api.thingspeak.com/channels/%s/feeds/last.json?api_key=%s" \
-    #                         % (CHANNEL_ID,READ_API_KEY))
-
-    #     response = read_con.read()
-    #     http_status_code = read_con.getcode()
-
-    #     if (http_status_code == 200):
-    #         print("HTTP read_conection Successfull!")
-    #     else:
-    #         print("HTTP read_conection Failed!")
-    #         break       # check
-
-    #     data=json.loads(response)
-
-    #     input_pass = data['field1']   
-    #     start = data['field3']   # start/stop: 1=start, 0=stop
-
-
-    #     # Send commands to server here: (msg)
-
-
-    #     while(start):   # In start state
-
-    #         # Receive message from udp server
-    #         msg = client_socket.recvfrom(1024)
-    #         server_msg = msg.decode()
-
-    #         if (server_msg == "y"):   # inputted pass matches database pass -> passchecker = y
-    #             write_msg = "y"
-    #             write_msg = write_msg.replace('\n', "%0A")
-    #             field_num = "2"         # field2: passchecker
-
-    #             write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
-    #             print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
-
-    #         elif (server_msg == "m"):   # inputted pass matches database pass BUT in wrong order -> passchecker = m
-    #             write_msg = "m"
-    #             write_msg = write_msg.replace('\n', "%0A")
-    #             field_num = "2"         # field2: passchecker
-
-    #             write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
-    #             print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
-            
-    #         elif (server_msg == "n"):   # inputted pass does NOT match database pass -> passchecker = n
-    #             write_msg = "n"
-    #             write_msg = write_msg.replace('\n', "%0A")
-    #             field_num = "2"         # field2: passchecker
-
-    #             write_con=urlopen('https://api.thingspeak.com/update?api_key=LKDF3RROONZUUTAS&field'+field_num+'='+write_msg)
-    #             print("\nMessage has successfully been sent to ThingSpeak channel. Field number = " + field_num + " Message: " + write_msg)
-
-
-        
-
-
-
-
-
-
+    ec2_client_socket.close()
+    board_client_socket.close()
 
 
 
