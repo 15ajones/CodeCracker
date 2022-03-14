@@ -4,7 +4,7 @@ from decimal import Decimal
 from pprint import pprint
 from boto3.dynamodb.conditions import Key
 from random import randrange
-
+import time
 def create_user_table(dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb',region_name='us-east-1')
@@ -120,7 +120,7 @@ def main():
     game_started = False
     number_players = 0
     players = []
-
+    UI_cadd = "none"
     
     while True:
         if not game_started:
@@ -140,10 +140,15 @@ def main():
                 print(cmsg)
                 server_socket.sendto(cmsg.encode(), cadd)
                 wordle = ""
+                if UI_cadd != "none":
+                    cmsg = "select"
+                    server_socket.sendto(cmsg.encode(), UI_cadd)
                 for i in range(5):
                     x = int(randrange(4))
                     wordle+=wordle_characters[x]
                 print(wordle)
+            elif cmsg[0]=="ui" or cmsg[0]=="UI":
+                UI_cadd = cadd
             else:
                 is_admin = True if number_players == 0 else False
                 players.append(player_to_add)
@@ -167,6 +172,9 @@ def main():
                         break
                     else:
                         cmsg = "Your turn"
+                        if UI_cadd != "none":
+                            cmsg = "turn " +  player[0] 
+                            server_socket.sendto(cmsg.encode(), UI_cadd)
                         print(cmsg)
                         print(player[0])
                         print(player[1])
@@ -189,14 +197,27 @@ def main():
                             else:
                                 guess_reply += "r"
                                 correct_guess = False
+                        if UI_cadd != "none":
+                            cmsg = "outcome " +  guess_reply
+                            server_socket.sendto(cmsg.encode(), UI_cadd)
                         if correct_guess: # if correct guess we send a message saying game over to everyone, and end this section
+                            if UI_cadd != "none":
+                                cmsg = "game over winner " +  player[0] 
+                                server_socket.sendto(cmsg.encode(), UI_cadd)
                             game_started = False
                             cmsg = "Correct guess! Game over! Winner is: " + str(player[1])
                             for x in players:
                                 server_socket.sendto(cmsg.encode(), (x[0], int(x[1])))
-                        else:
-                            for x in players:
-                                server_socket.sendto(guess_reply.encode(), (x[0], int(x[1])))
+                            time.sleep(5)
+                            if UI_cadd != "none":
+                                cmsg = "menu"
+                                server_socket.sendto(cmsg.encode(), UI_cadd)
+
+                        # else:
+                        #     for x in players:
+                        #         server_socket.sendto(guess_reply.encode(), (x[0], int(x[1])))
+                            
+
 
                         
 
@@ -205,3 +226,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+import socket
+server_port = 12000
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_socket.bind(('0.0.0.0',server_port))
+x = True
+send_to = ('146.169.176.90', 11000)
+cmsg, cadd = server_socket.recvfrom(2048)
+print(cmsg.decode())
+while x:
+        msg = input("input message")
+        if msg == "exit":
+                x = False
+                break
+        else:
+                print("sending")
+                server_socket.sendto(msg.encode(), cadd)
+                print("sent")
+
