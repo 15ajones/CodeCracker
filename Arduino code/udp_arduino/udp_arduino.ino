@@ -15,8 +15,8 @@ unsigned int localUdpPort = 11000;
 
 
 //Server connect to WiFi Network
-const char *ssid = "OnePlus7";  //Enter your wifi SSID
-const char *password = "arduinotest";  //Enter your wifi Password
+const char *ssid = "BT-GCCK22";  //Enter your wifi SSID
+const char *password = "X4dTeaELCygRkQ";  //Enter your wifi Password
 
 int count=0;
 //=======================================================================
@@ -49,7 +49,6 @@ void setup() {
 
 void loop() {
     
-    int index = 0;
     //buffer for incoming messages
     char packetBuffer[256];
     delay(10);
@@ -58,13 +57,19 @@ void loop() {
       if (len > 0) {
         packetBuffer[len] = 0;
         //print packetBuffer
-        Serial.println(packetBuffer); 
-        //showing where the packet came from
+        Serial.println(packetBuffer);
+        //Send data to FPGA for processing 
+        if(packetBuffer == "1"){
+          Serial.write(1); 
+        }
+        //
+        //showing where the packet came from (debugging)
         Serial.print("Received packet from ");
         IPAddress remoteIp = Udp.remoteIP();
         Serial.print(remoteIp);
         Serial.print(", port ");
         Serial.println(Udp.remotePort());
+        
         //sending stuff
         //sending JTAG stuff
         if(strcmp(packetBuffer, "your turn")==0){
@@ -79,11 +84,13 @@ void loop() {
              //showNewData();
            }
            Serial.print("FPGA UART: ");
-           Serial.println(receivedChars);
+           Serial.print(receivedChars);
            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
            Udp.write(receivedChars);
            Udp.endPacket();
+           Serial.write(5);
         }
+        ////
       }
     }
     
@@ -133,6 +140,10 @@ void recvWithEndMarker() {
             newData = true;
         }
     }
+}
+
+void sendData(char data){
+  Serial.write('1');
 }
 
 //void showNewData() {
