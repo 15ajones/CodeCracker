@@ -8,6 +8,8 @@ import sys
 from xml.etree.ElementPath import get_parent_map
 import socket
 
+from grpc import xds_channel_credentials
+
 # server stuff
 host_name = '35.176.178.191'
 host_port = 12000
@@ -19,6 +21,9 @@ ping = "hello server"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
 
 message = ""
+p1_score = 0
+p2_score = 0
+p3_score = 0
 
 # root window
 root = tk.Tk()
@@ -36,16 +41,19 @@ gameSelection = ttk.Frame(tab, width=720, height=480)
 gameSelection.pack(fill='both', expand=True)
 game1Tab = ttk.Frame(tab, width=720, height=480)
 game1Tab.pack(fill='both', expand=True)
+leaderboardTab = ttk.Frame(tab, width=720, height=480)
+leaderboardTab.pack(fill='both', expand=True)
 
 # add frames to tabs
 tab.add(gameSelection, text='Game Selection')
 tab.add(game1Tab, text='Game 1')
+tab.add(leaderboardTab, text='Leaderboard')
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
 textFont = font.Font(family='Arial', weight="bold", size=16)
 
 def inputListen():
-    global message
+    global message, p1_score, p2_score, p3_score
     while True:
         #print("[INPUT]:", end=' ')
         #sys.stdout.flush()
@@ -53,6 +61,7 @@ def inputListen():
         message = ui_socket.recv(1024)
         print("message received")
         message = message.decode()
+        #message = input("[IN] ")           Testing without server, comment 4 line above
         print(message)
         if message == "right":
             if b1['relief'] == SOLID:
@@ -87,10 +96,29 @@ def inputListen():
                 threadGameOne = threading.Thread(target=startGameOne, daemon=True)
                 threadGameOne.start()
             elif b2['relief'] == SOLID:
-                print("start game 2")
+                print("Game 2")
             else:
-                print("start game 3")
+                tab.select(leaderboardTab)
 
+        if message.split()[0] == "leaderboard":
+            print("Updating Scores")
+            msg = message.split()
+            for x in range(len(msg)):
+                if msg[x] == "user1":
+                    p1_score = msg[x+1]
+                    print("p1 score: ", msg[x+1])
+                if msg[x] == "user2":
+                    p2_score = msg[x+1]
+                    print("p2 score: ", msg[x+1])
+                if msg[x] == "user3":
+                    p3_score = msg[x+1]
+                    print("p3 score: ", msg[x+1])
+                p1Label['text'] = "1\t\t" + str(p1_score)
+                p2Label['text'] = "2\t\t" + str(p2_score)
+                p3Label['text'] = "3\t\t" + str(p3_score)
+
+        if message == "scores":
+            print(p1_score, p2_score, p3_score)
         if message == "menu":
             tab.select(gameSelection)
         if message == "exit" :
@@ -101,9 +129,6 @@ def startGameOne():
     tab.select(game1Tab)
     global message
 
-    playerlabel = Label(game1Tab, text="READY", fg='black', font=textFont)
-    playerlabel.place(x=320.0, y=20.0, anchor="center")
-
     canvas = tk.Canvas(game1Tab, height=80, width=480)
     colours = ['white','white','white','white','white']
 
@@ -113,10 +138,9 @@ def startGameOne():
 
             if x[0] == "menu" :
                 canvas.delete('all')
-                playerlabel['text'] = ""
+                playerlabel['text'] = "READY"
 
             elif x[0] == "turn" :
-                playerlabel['text'] = ""
                 playerlabel['text'] = x[1]
             #if x[0] == "outcome" :
                 #outcomelabel['text'] = x[1]
@@ -136,7 +160,7 @@ def startGameOne():
                 canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
                 message = ""    # need to clear message else it loops infinitely back to outcome
 
-                canvas.pack(side='bottom')
+                canvas.pack(pady=100, anchor="center")
                 #print(canvas.find_all())    # prints all canvas items active
             elif x[0] == "game" :
                 playerlabel['text'] = "The winner is: " + x[3]
@@ -144,14 +168,29 @@ def startGameOne():
 
 
 # these buttons have been added to 'gameSelection tab'
-b1 = Button(gameSelection, text="MasterMind", command=lambda: startGameOne(), height="32", width="32", fg='red', font=buttonFont, relief=SOLID)
+b1 = Button(gameSelection, text="MasterMind", command=lambda: threading.Thread(target=startGameOne, daemon=True).start(), height="32", width="32", fg='red', font=buttonFont, relief=SOLID)
 b1.pack(padx=5, pady=15, side=tk.LEFT)
 b2 = Button(gameSelection, text="Game 2", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b2.pack(padx=5, pady=15, side=tk.LEFT)
-b3 = Button(gameSelection, text="Game 3", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
+b3 = Button(gameSelection, text="Leaderboard", command=lambda:tab.select(leaderboardTab), height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b3.pack(padx=5, pady=15, side=tk.LEFT)
 
 Button(game1Tab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=450.0)
+Button(leaderboardTab, text="Return to Menu", font=buttonFont, command=lambda: tab.select(gameSelection)).place(x=600.0, y=450.0)
+
+playerlabel = Label(game1Tab, text="READY", fg='black', font=textFont)
+playerlabel.pack(pady = 50, anchor="center")
+
+titleLabel = Label(leaderboardTab, text="LEADERBOARD", fg='black', font=textFont)
+titleLabel.pack(pady = 50, anchor="center")
+scoresLabel = Label(leaderboardTab, text="PLAYER\t\tSCORE", fg='black', font=textFont)
+scoresLabel.pack(pady = 40, anchor="center")
+p1Label = Label(leaderboardTab, text="1\t\t0", fg='black', font=textFont)
+p1Label.pack(pady = 20, anchor="center")
+p2Label = Label(leaderboardTab, text="2\t\t0", fg='black', font=textFont)
+p2Label.pack(pady = 20, anchor="center")
+p3Label = Label(leaderboardTab, text="3\t\t0", fg='black', font=textFont)
+p3Label.pack(pady = 20, anchor="center")
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 
 listener = threading.Thread(target=inputListen)
