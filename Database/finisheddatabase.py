@@ -121,6 +121,7 @@ def main():
     number_players = 0
     players = []
     UI_cadd = "none"
+    game_type = ""
     
     while True:
         if not game_started:
