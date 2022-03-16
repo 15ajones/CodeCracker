@@ -11,7 +11,7 @@ import socket
 from grpc import xds_channel_credentials
 
 # server stuff
-host_name = '35.176.178.191'
+host_name = 'localhost'
 host_port = 12000
 
 ui_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -41,13 +41,17 @@ gameSelection = ttk.Frame(tab, width=720, height=480)
 gameSelection.pack(fill='both', expand=True)
 game1Tab = ttk.Frame(tab, width=720, height=480)
 game1Tab.pack(fill='both', expand=True)
+game2Tab = ttk.Frame(tab, width=720, height=480)
+game2Tab.pack(fill='both', expand=True)
 leaderboardTab = ttk.Frame(tab, width=720, height=480)
 leaderboardTab.pack(fill='both', expand=True)
 
 # add frames to tabs
 tab.add(gameSelection, text='Game Selection')
 tab.add(game1Tab, text='Game 1')
+tab.add(game2Tab, text='Game 2')
 tab.add(leaderboardTab, text='Leaderboard')
+
 # create game buttons
 buttonFont = font.Font(family='Arial', weight="bold", size=8)
 textFont = font.Font(family='Arial', weight="bold", size=16)
@@ -55,13 +59,13 @@ textFont = font.Font(family='Arial', weight="bold", size=16)
 def inputListen():
     global message, p1_score, p2_score, p3_score
     while True:
-        #print("[INPUT]:", end=' ')
-        #sys.stdout.flush()
-        print("waiting for message")
-        message = ui_socket.recv(1024)
-        print("message received")
-        message = message.decode()
-        #message = input("[IN] ")           Testing without server, comment 4 line above
+        print("[INPUT]:", end=' ')
+        sys.stdout.flush()
+        # print("waiting for message")
+        # message = ui_socket.recv(1024)
+        # print("message received")
+        # message = message.decode()
+        message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
         if message == "right":
             if b1['relief'] == SOLID:
@@ -96,7 +100,8 @@ def inputListen():
                 threadGameOne = threading.Thread(target=startGameOne, daemon=True)
                 threadGameOne.start()
             elif b2['relief'] == SOLID:
-                print("Game 2")
+                threadGameTwo = threading.Thread(target=startGameTwo, daemon=True)
+                threadGameTwo.start()
             else:
                 tab.select(leaderboardTab)
 
@@ -121,27 +126,33 @@ def inputListen():
             print(p1_score, p2_score, p3_score)
         if message == "menu":
             tab.select(gameSelection)
+            message = "."
         if message == "exit" :
-            exit()
+            break
 
 
 def startGameOne():
     tab.select(game1Tab)
     global message
 
+    playerlabel['text'] = "READY"
+
+
     canvas = tk.Canvas(game1Tab, height=80, width=480)
     colours = ['white','white','white','white','white']
+
 
     while True:
         if message != "" : 
             x = message.split()
 
             if x[0] == "menu" :
-                canvas.delete('all')
+                canvas.destroy()
                 playerlabel['text'] = "READY"
+                break
 
             elif x[0] == "turn" :
-                playerlabel['text'] = x[1]
+                playerlabel['text'] = x[1] + ", YOUR TURN"
             #if x[0] == "outcome" :
                 #outcomelabel['text'] = x[1]
             elif x[0] == "outcome" :
@@ -158,19 +169,51 @@ def startGameOne():
                 canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
                 canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
                 canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
-                message = ""    # need to clear message else it loops infinitely back to outcome
+                message = "."    # need to clear message else it loops infinitely back to outcome
 
-                canvas.pack(pady=100, anchor="center")
+                
                 #print(canvas.find_all())    # prints all canvas items active
-            elif x[0] == "game" :
-                playerlabel['text'] = "The winner is: " + x[3]
+            elif x[0] == "winner" :
+                playerlabel['text'] = "WINNER: " + x[1]
+        canvas.pack(pady=100, anchor="center")
         game1Tab.update()
+
+def startGameTwo():
+    tab.select(game2Tab)
+    global message
+
+    playerlabel2['text'] = "READY"
+    movelabel['text'] = "LAST MOVE:"
+    remainingplayers['text'] = "PLAYER_1\tPLAYER_2\tPLAYER_3"
+
+
+    while True:
+        if message != "" : 
+            x = message.split()
+
+            if x[0] == "menu" :
+                break
+            if x[0] == "turn" :
+                playerlabel2['text'] = x[1] + ", YOUR TURN"
+            if x[0] == "move" :
+                movelabel['text'] = "LAST MOVE: " + x[1]
+            if x[0] == "eliminated" :
+                remainingplayers['text'] = remainingplayers['text'].replace(x[1], "")
+            if x[0] == "winner" :
+                playerlabel2['text'] = "WINNER: " + x[1] 
+        
+        game2Tab.update()
+
+            
+            
+
+
 
 
 # these buttons have been added to 'gameSelection tab'
 b1 = Button(gameSelection, text="MasterMind", command=lambda: threading.Thread(target=startGameOne, daemon=True).start(), height="32", width="32", fg='red', font=buttonFont, relief=SOLID)
 b1.pack(padx=5, pady=15, side=tk.LEFT)
-b2 = Button(gameSelection, text="Game 2", height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
+b2 = Button(gameSelection, text="Game 2", command=lambda: threading.Thread(target=startGameTwo, daemon=True).start(), height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b2.pack(padx=5, pady=15, side=tk.LEFT)
 b3 = Button(gameSelection, text="Leaderboard", command=lambda:tab.select(leaderboardTab), height="32", width="32", fg='black', font=buttonFont, relief=GROOVE)
 b3.pack(padx=5, pady=15, side=tk.LEFT)
@@ -180,6 +223,18 @@ Button(leaderboardTab, text="Return to Menu", font=buttonFont, command=lambda: t
 
 playerlabel = Label(game1Tab, text="READY", fg='black', font=textFont)
 playerlabel.pack(pady = 50, anchor="center")
+
+playerlabel2 = Label(game2Tab, text="READY", fg='black', font=textFont)
+playerlabel2.pack(pady = 50, anchor="center")
+
+movelabel = Label(game2Tab, text="LAST MOVE:", fg='black', font=textFont)
+movelabel.pack(pady=50, anchor="center")
+
+remaining = Label(game2Tab, text="REMAINING PLAYERS", fg='black', font=textFont)
+remaining.pack(pady=30, anchor="center")
+
+remainingplayers = Label(game2Tab, text="PLAYER_1\tPLAYER_2\tPLAYER_3", fg='black', font=textFont)
+remainingplayers.pack(pady=10, anchor="center")
 
 titleLabel = Label(leaderboardTab, text="LEADERBOARD", fg='black', font=textFont)
 titleLabel.pack(pady = 50, anchor="center")
@@ -196,6 +251,7 @@ p3Label.pack(pady = 20, anchor="center")
 listener = threading.Thread(target=inputListen)
 listener.start()
 root.mainloop()
+exit()
 
 # types of inputs:
 
