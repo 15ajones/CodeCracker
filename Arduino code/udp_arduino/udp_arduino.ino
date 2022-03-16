@@ -40,6 +40,8 @@ void setup() {
     Serial.print(WiFi.localIP());
     Serial.print(" on port ");
     Serial.println(localUdpPort);
+
+    delay(1000);
     
     //listening for packets
     Udp.begin(localUdpPort);
@@ -56,42 +58,46 @@ void loop() {
       int len = Udp.read(packetBuffer, 255);
       if (len > 0) {
         packetBuffer[len] = 0;
-        //print packetBuffer
-        Serial.println(packetBuffer);
-        //Send data to FPGA for processing 
-        if(packetBuffer == "1"){
-          Serial.write(1); 
-        }
-        //
-        //showing where the packet came from (debugging)
-        Serial.print("Received packet from ");
-        IPAddress remoteIp = Udp.remoteIP();
-        Serial.print(remoteIp);
-        Serial.print(", port ");
-        Serial.println(Udp.remotePort());
-        
-        //sending stuff
-        //sending JTAG stuff
-        if(strcmp(packetBuffer, "your turn")==0){
-           //resetting the previous receivedChars
-           memset(receivedChars,0,strlen(receivedChars));
-           //printing what was sent by client
-           Serial.println(packetBuffer);
-           //only send data once it has reached at least 4 characters.
-           delay(1000);
-           while(strlen(receivedChars)< 4){
-              recvWithEndMarker();
-             //showNewData();
-           }
-           Serial.print("FPGA UART: ");
-           Serial.print(receivedChars);
-           Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-           Udp.write(receivedChars);
-           Udp.endPacket();
-           Serial.write(5);
-        }
-        ////
       }
+      //print packetBuffer
+      //Serial.println(packetBuffer);
+      //Send data to FPGA for processing 
+      if(strcmp(packetBuffer, "1")==0){
+        Serial.write(1); 
+        delay(1000);
+        //read back from the FPGA
+        recvWithEndMarker();
+        
+      }
+      delay(1000);
+      //showing where the packet came from (debugging)
+//      Serial.print("Received packet from ");
+//      IPAddress remoteIp = Udp.remoteIP();
+//      Serial.print(remoteIp);
+//      Serial.print(", port ");
+//      Serial.println(Udp.remotePort());
+      
+      //sending stuff
+      //sending JTAG stuff
+      if(strcmp(packetBuffer, "your turn")==0){
+         //resetting the previous receivedChars
+         memset(receivedChars,0,strlen(receivedChars));
+         //printing what was sent by client
+         //only send data once it has reached at least 4 characters.
+         delay(1000); //need them to allow the buffer some time
+         while(strlen(receivedChars)< 4){
+            Serial.write(2); //2 indicates play on the FPGA... 
+            recvWithEndMarker();
+           //showNewData();
+         }
+         delay(1000);
+         Serial.print("FPGA UART: ");
+         Serial.print(receivedChars);
+         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+         Udp.write(receivedChars);
+         Udp.endPacket();
+      }
+//        ////
     }
     
 

@@ -26,10 +26,8 @@
 /////////////////////////////////////////////////////////////////////////
 //////////DISPLAY VARIABLES AND INITIALISATION///////////////////////////
 
-int serverdata; // response from server - we are going to make it an integer for simplicity...
-char prevserverdata;
+int prevserverdata;
 int getActualText();
-void clearActualText();
 int updateTimer(int tmr);
 int updateLocation(int loc, int len);
 int getBin(char letter);
@@ -51,16 +49,16 @@ int timer = CLOCKINIT;  //Standard speed for movement
 //Does initial setup of display
 void initializeDisplay(){
 	//These controls determine what functions the display is executing:
-	prevserverdata = '0';
-	serverdata = 5;   //random number to set server data not eqaualling any of the below...
+	prevserverdata = 20;
 	//First Turn all six of the seven segment displays off
 	print(getBin('!'), getBin('!'), getBin('!'), getBin('!'), getBin('!'), getBin('!'));
 }
 
 char updateText(int serverdata){ // in FPGA change this to if there is any new input
 
-	if (serverdata == '2'){ // 2 is the code when "your turn" is sent by the server
-		static_flag = 0; //play scrolls through
+	if (serverdata == 2){ // 2 is the code when "your turn" is sent by the server
+		static_flag = 1; //play scrolls through
+		admin_flag = 0;
 		enteredText[0] = 'p';
 		length = getActualText();
 		enteredText[1] = 'l';
@@ -74,8 +72,9 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		enteredText[5] = ' ';
 		length = getActualText();
 	}
-	if(serverdata == 1){ //if the server isn't telling fpga to play and fpga is the admin, show word "ADMIN"
+	else if(serverdata == 1){ //if the server isn't telling fpga to play and fpga is the admin, show word "ADMIN"
 		static_flag = 1; //admin is shown statically
+		admin_flag = 1;
 		enteredText[0] = 'a';
 		length = getActualText();
 		enteredText[1] = 'd';
@@ -91,7 +90,8 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 	}
 	else{ //when leds don't show play, if player is not admin, show player number
 		//alt_putstr("here :) \n"); for testing
-		static_flag = 1;
+		static_flag = 0;
+		admin_flag = 0;
 		enteredText[0] = 'p';
 		length = getActualText();
 		enteredText[1] = '1';
@@ -105,7 +105,6 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		enteredText[5] = ' ';
 		length = getActualText();
 		}
-	}
 	return &enteredText[0];
 }
 
@@ -237,6 +236,7 @@ int getBinaryLetter(char letter){
 	int let = getBin(letter);
 	return let;
 }
+
 //Prints each of the letters out to the screen
 void print(int let5, int let4, int let3, int let2, int let1, int let0){
 	//Takes the binary value for each letter and places it on each of the six 7-segment displays
@@ -404,41 +404,33 @@ void timer_init(void * isr) {
 //////////////////////////////////////////////////
 ////////////////////////////////////////////////// END OF LED CODE...
 
-///////////////////////////////
-////////////MAIN///////////////
-///////////////////////////////
 
-int main() {
-
-	//Display initialisation//
-	initializeDisplay();
-
-	///%Accelerometer initialisations%///
-    alt_32 x_read;
-    alt_32 y_read;
-    alt_32 z_read;
-    alt_up_accelerometer_spi_dev * acc_dev;
-    acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
-    if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
-        return 1;
-    }
-
-    ///%switches and buttons initialisation%///
-    timer_init(sys_timer_isr);
-    int button_datain;
-    int switch_datain;
-    char response[100];
-    int flicked_switch;
-
-    ///Code///
-    while (1) {
+////////////////GAME FUNCTION//////////////
 
 
-    	///Switches code///
-     	switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
-    	switch_datain &= (0b1111111111);
+int start_Wordle(){
 
-    	if(switch_datain != 0){
+		///%Accelerometer initialisations%///
+	    alt_32 x_read;
+	    alt_32 y_read;
+	    alt_up_accelerometer_spi_dev * acc_dev;
+	    acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
+	    if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
+	        return 1;
+	    }
+
+	    ///%switches and buttons initialisation%///
+	    timer_init(sys_timer_isr);
+	    int button_datain;
+	    int switch_datain;
+	    char response[100];
+	    int flicked_switch;
+
+	    ///Switches code///
+		switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
+		switch_datain &= (0b1111111111);
+
+		if(switch_datain != 0){
 			flicked_switch = switch_datain;
 			while(switch_datain != 0){
 				//printf("here \n");
@@ -458,76 +450,76 @@ int main() {
 				strcat(response,"3");
 				printf("\nResponse: %s\n", response);
 			}
-//			else if(flicked_switch == 8){
-//				response = '4\0';
-//			}
-//			else if(flicked_switch == 16){
-//				response = '5\0';
-//			}
-//			else if(flicked_switch == 32){
-//				response = '6\0';
-//			}
-//			else if(flicked_switch == 64){
-//				response = '7\0';
-//			}
-//			else if(flicked_switch == 128){
-//				response = '8\0';
-//			}
-//			else if(flicked_switch == 256){
-//				response = '9\0';
-//			}
-//			else if(flicked_switch == 512){
-//				response = '0\0';
-//			}
+	//			else if(flicked_switch == 8){
+	//				response = '4\0';
+	//			}
+	//			else if(flicked_switch == 16){
+	//				response = '5\0';
+	//			}
+	//			else if(flicked_switch == 32){
+	//				response = '6\0';
+	//			}
+	//			else if(flicked_switch == 64){
+	//				response = '7\0';
+	//			}
+	//			else if(flicked_switch == 128){
+	//				response = '8\0';
+	//			}
+	//			else if(flicked_switch == 256){
+	//				response = '9\0';
+	//			}
+	//			else if(flicked_switch == 512){
+	//				response = '0\0';
+	//			}
 			//printf("response = %d\n", response);
 
 		}
 
 
-    	////////////////////////////
-    	////Accelerometer code//////
+		////////////////////////////
+		////Accelerometer code//////
 
-    	clock_t exec_t1, exec_t2;
-    	exec_t1 = times(NULL);
+		clock_t exec_t1, exec_t2;
+		exec_t1 = times(NULL);
 
-        alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-        alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
-        // alt_up_accelerometer_spi_read_z_axis(acc_dev, & z_read);
-        alt_32 FIR_out[3];
-        FIR_out[0] = x_read;
-        FIR_out[1] = y_read;
+		alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+		alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+		// alt_up_accelerometer_spi_read_z_axis(acc_dev, & z_read);
+		alt_32 FIR_out[2];
+		FIR_out[0] = x_read;
+		FIR_out[1] = y_read;
 
-        ///DEBUGGING//////
-        //printf("FIR out x = %d \n", FIR_out[0]);
-        //printf("FIR out y = %d \n", FIR_out[1]);
-        //////////////////
+		///DEBUGGING//////
+		//printf("FIR out x = %d \n", FIR_out[0]);
+		//printf("FIR out y = %d \n", FIR_out[1]);
+		//////////////////
 
-        //Left & Right//
-        if(FIR_out[0] < RIGHTLIM){
-            while(is_flat(FIR_out[0]) == 0){
-            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-            	FIR_out[0] = x_read;
-            }
-            strcat(response, "R");
-            printf("\nResponse: %s\n", response);
+		//Left & Right//
+		if(FIR_out[0] < RIGHTLIM){
+			while(is_flat(FIR_out[0]) == 0){
+				alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+				FIR_out[0] = x_read;
+			}
+			strcat(response, "R");
+			printf("\nResponse: %s\n", response);
 
-        }else if(FIR_out[0] > LEFTLIM){
-            while(is_flat(FIR_out[0]) == 0){
-            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
-            	FIR_out[0] = x_read;
-            }
-            strcat(response, "L");
-            printf("\nResponse: %s\n", response);
-        }
+		}else if(FIR_out[0] > LEFTLIM){
+			while(is_flat(FIR_out[0]) == 0){
+				alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+				FIR_out[0] = x_read;
+			}
+			strcat(response, "L");
+			printf("\nResponse: %s\n", response);
+		}
 
-        //Forward & Backward//
-        if(FIR_out[1] < FORWARDLIM){
+		//Forward & Backward//
+		if(FIR_out[1] < FORWARDLIM){
 			while(is_flat(FIR_out[1]) == 0){
 				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
 				FIR_out[1] = y_read;
 			}
 			strcat(response, "F");
-            printf("\nResponse: %s\n", response);
+			printf("\nResponse: %s\n", response);
 
 		}else if(FIR_out[1] > BACKWARDLIM){
 			while(is_flat(FIR_out[1]) == 0){
@@ -535,13 +527,13 @@ int main() {
 				FIR_out[1] = y_read;
 			}
 			strcat(response, "B");
-            printf("\nResponse: %s\n", response);
-        }
+			printf("\nResponse: %s\n", response);
+		}
 
-        ////////////////////////
-        //////send button///////
-        int pressed=0;
-        button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+		////////////////////////
+		//////send button///////
+		int pressed=0;
+		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if((button_datain &= 0b0000000001) && (pressed == 0)){
 			pressed = 1;
 			strcat(response, "\n");
@@ -566,16 +558,136 @@ int main() {
 			usleep(50000);
 		}
 
-        //printf("<-> %c <->", response[100]);
-        convert_read(x_read, & level, & led);
+		//printf("<-> %c <->", response[100]);
+		convert_read(x_read, & level, & led);
+
+}
+
+int admin_actions(){
+	///%Accelerometer initialisations%///
+	alt_32 x_read;
+	alt_32 y_read;
+	alt_up_accelerometer_spi_dev * acc_dev;
+	acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
+	if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
+		return 1;
+	}
+
+	///%switches and buttons initialisation%///
+	timer_init(sys_timer_isr);
+	int button_datain;
+	char admin_response[3];
+
+	//Setting up accelerometer;
+	clock_t exec_t1, exec_t2;
+	exec_t1 = times(NULL);
+
+	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+	alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+	// alt_up_accelerometer_spi_read_z_axis(acc_dev, & z_read);
+	alt_32 FIR_out[2];
+	FIR_out[0] = x_read;
+	FIR_out[1] = y_read;
+
+	//Left & Right//
+	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+	if(FIR_out[0] < RIGHTLIM){
+		while(is_flat(FIR_out[0]) == 0){
+			alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+			FIR_out[0] = x_read;
+		}
+		strcat(admin_response, "R\n");
+		printf("\nResponse: %s\n", admin_response);
+		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+		usleep(10000);
+		memset(admin_response,0,strlen(admin_response));
+	}
+	else if(FIR_out[0] > LEFTLIM){
+		while(is_flat(FIR_out[0]) == 0){
+			alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+			FIR_out[0] = x_read;
+		}
+		strcat(admin_response, "L\n");
+		printf("\nResponse: %s\n", admin_response);
+		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+		usleep(10000);
+		memset(admin_response,0,strlen(admin_response));
+	}
+
+	////////////////////////
+	//////send button///////
+	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+	if((button_datain &= 0b0000000001)){
+		strcat(admin_response, "1\n"); //1 means click to go into the game/leaderboard...
+		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+		printf("\nSending: %s\n", admin_response);
+		usleep(10000);
+		memset(admin_response,0,strlen(admin_response));
+	}
+	//reset button
+	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+	if((button_datain &= 0b0000000010)){
+		strcat(admin_response, "2\n"); //2 means back out of leaderboard if possible...
+		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+		printf("\nSending: %s\n", admin_response);
+		usleep(10000);
+		memset(admin_response,0,strlen(admin_response));
+	}
+	else {
+		usleep(50000);
+	}
+
+	//printf("<-> %c <->", response[100]);
+	convert_read(x_read, & level, & led);
+
+
+}
+
+///////////////////////////////
+////////////MAIN///////////////
+///////////////////////////////
+
+int main() {
+
+	//Display initialisation//
+	initializeDisplay();
 
 
 
-        /////////////////////
-		///receiving shit////
-		int received;
-		received = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE); //watch out this is IORD not IOWR...
-		printf("Received character: %d", received);
+    ///Code///
+    while (1) {
+
+    	int serverdata; // response from server - we are going to make it an integer for simplicity...
+    	/////////////////////
+    	///receiving shit////
+		serverdata = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE); //watch out this is IORD not IOWR...
+		printf("Server data: %d \n", serverdata);
+//		if(serverdata == 1 || serverdata == 2)
+		//calling the display functions and updating the current and previous serverdata chars;
+		if((prevserverdata != serverdata)){ //if the old response and current one are not the same then we want to update the display
+			  updateText(serverdata);
+			  prevserverdata = serverdata;
+		}
+		if(static_flag){
+		  //alt_putstr("static_flag is 1\n");
+		  //alt_putstr(&text[0]);
+		  print_letters(text[0], text[1], text[2], text[3], text[4], text[5]);
+		}
+	    else{
+		  //alt_putstr("static_flag is 0\n");
+		  //alt_putstr(&text[0]);
+		  //the characters out to the screen in the correct order, shifted by the amount.  We modulo with the length of the text so the display keeps wrapping around
+		  print_letters(text[(location % length)], text[(location + 1) % length], text[(location + 2) % length], text[(location + 3) % length], text[(location + 4) % length], text[(location + 5) % length]);
+	    }
+
+		if(admin_flag == 1){
+			//printf("In the admin area:");
+			admin_actions();
+		}
+		else{
+			//printf("In wordle:");
+			start_Wordle();
+		}
 
 
 
