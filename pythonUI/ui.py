@@ -70,7 +70,7 @@ def inputListen():
         # message = message.decode()
         message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
-        if message != "":
+        if message != " ":
             if message == "right":
                 if b1['relief'] == SOLID:
                     b2['relief'] = SOLID
