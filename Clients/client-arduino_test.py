@@ -99,18 +99,13 @@ def main():
                 # server_msg = msg.decode()
                 server_msg = input()
 
-                if server_msg == "memory":
-                    in_game = True
-                    msg = server_msg  # tells admin arduino what game is selected
-                    board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
-                    print("sent to board: " + msg)   
-                
-                else:
-                    in_game = True
-                    msg = server_msg  # tells admin arduino what game is selected
-                    board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
-                    print("sent to board: " + msg)   
+                if server_msg == "memory" or server_msg == "mastermind":
+                        in_game =  True
+                        msg = "start game"  # tells admin arduino what game is selected
+                        board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
+                        print("sent to board: " + msg)    
     
+       
         else: #game state (during rounds)
             # msg = ec2_client_socket.recvfrom(1024)      # recieves game name 
             # server_msg = msg.decode()
