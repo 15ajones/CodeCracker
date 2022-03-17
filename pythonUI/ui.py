@@ -184,7 +184,7 @@ def startGameTwo():
 
     playerlabel2['text'] = "READY"
     movelabel['text'] = "LAST MOVE:"
-    remainingplayers['text'] = "PLAYER_1\tPLAYER_2\tPLAYER_3"
+    remainingplayers['text'] = ""
 
 
     while True:
@@ -197,8 +197,15 @@ def startGameTwo():
                 playerlabel2['text'] = x[1] + ", YOUR TURN"
             if x[0] == "move" :
                 movelabel['text'] = "LAST MOVE: " + x[1]
-            if x[0] == "eliminated" :
-                remainingplayers['text'] = remainingplayers['text'].replace(x[1], "")
+            if x[0] == "players" :
+                remainingplayers['text'] = ""
+                for i in range(len(x)) :
+                    if i != 0 :
+                        if remainingplayers['text'] == "" :
+                            remainingplayers['text'] = x[i]
+                        else :
+                            remainingplayers['text'] = remainingplayers['text'] + "\t" + x[i]
+                message = "."
             if x[0] == "winner" :
                 playerlabel2['text'] = "WINNER: " + x[1] 
         
