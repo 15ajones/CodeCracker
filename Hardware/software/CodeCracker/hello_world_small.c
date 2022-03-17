@@ -43,6 +43,9 @@ int static_flag; //this is gonna be as a response from an input from the databas
 int admin_flag;
 int timer = CLOCKINIT;  //Standard speed for movement
 
+char admin_response[3];
+char game_response[100];
+
 ///////////////////////////////////////////////////////////////////////////
 /////DISPLAY FUNCTIONS///////
 
@@ -408,7 +411,7 @@ void timer_init(void * isr) {
 ////////////////GAME FUNCTION//////////////
 
 
-int start_Wordle(){
+int start_game(){
 
 		///%Accelerometer initialisations%///
 	    alt_32 x_read;
@@ -423,7 +426,6 @@ int start_Wordle(){
 	    timer_init(sys_timer_isr);
 	    int button_datain;
 	    int switch_datain;
-	    char response[100];
 	    int flicked_switch;
 
 	    ///Switches code///
@@ -439,16 +441,16 @@ int start_Wordle(){
 			}
 
 			if(flicked_switch == 1){
-				strcat(response,"1");
-				printf("\nResponse: %s\n", response);
+				strcat(game_response,"1");
+				printf("\nResponse: %s\n", game_response);
 			}
 			else if(flicked_switch == 2){
-				strcat(response,"2");
-				printf("\nResponse: %s\n", response);
+				strcat(game_response,"2");
+				printf("\nResponse: %s\n", game_response);
 			}
 			else if(flicked_switch == 4){
-				strcat(response,"3");
-				printf("\nResponse: %s\n", response);
+				strcat(game_response,"3");
+				printf("\nResponse: %s\n", game_response);
 			}
 	//			else if(flicked_switch == 8){
 	//				response = '4\0';
@@ -500,16 +502,16 @@ int start_Wordle(){
 				alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
 				FIR_out[0] = x_read;
 			}
-			strcat(response, "R");
-			printf("\nResponse: %s\n", response);
+			strcat(game_response, "R");
+			printf("\nResponse: %s\n", game_response);
 
 		}else if(FIR_out[0] > LEFTLIM){
 			while(is_flat(FIR_out[0]) == 0){
 				alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
 				FIR_out[0] = x_read;
 			}
-			strcat(response, "L");
-			printf("\nResponse: %s\n", response);
+			strcat(game_response, "L");
+			printf("\nResponse: %s\n", game_response);
 		}
 
 		//Forward & Backward//
@@ -518,16 +520,16 @@ int start_Wordle(){
 				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
 				FIR_out[1] = y_read;
 			}
-			strcat(response, "F");
-			printf("\nResponse: %s\n", response);
+			strcat(game_response, "F");
+			printf("\nResponse: %s\n", game_response);
 
 		}else if(FIR_out[1] > BACKWARDLIM){
 			while(is_flat(FIR_out[1]) == 0){
 				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
 				FIR_out[1] = y_read;
 			}
-			strcat(response, "B");
-			printf("\nResponse: %s\n", response);
+			strcat(game_response, "B");
+			printf("\nResponse: %s\n", game_response);
 		}
 
 		////////////////////////
@@ -536,22 +538,22 @@ int start_Wordle(){
 		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if((button_datain &= 0b0000000001) && (pressed == 0)){
 			pressed = 1;
-			strcat(response, "\n");
+			strcat(game_response, "\n");
 			int i = 0;
-			while (response[i] != '\0'){
-				IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
+			while (game_response[i] != '\0'){
+				IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, game_response[i]);
 				i++;
 				usleep(10000) ;
 			}
-			printf("\nSending: %s\n", response);
-			memset(response,0,strlen(response));
+			printf("\nSending: %s\n", game_response);
+			memset(game_response,0,100);
 		}
 		//reset button
 		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 		if((button_datain &= 0b0000000010) && (pressed==0)){
 			pressed = 1;
 			//reset response
-			memset(response,0,strlen(response));
+			memset(game_response,0,strlen(game_response));
 			printf("Resetting...\n");
 		}
 		else {
@@ -576,7 +578,7 @@ int admin_actions(){
 	///%switches and buttons initialisation%///
 	timer_init(sys_timer_isr);
 	int button_datain;
-	char admin_response[3];
+
 
 	//Setting up accelerometer;
 	clock_t exec_t1, exec_t2;
@@ -597,9 +599,13 @@ int admin_actions(){
 			FIR_out[0] = x_read;
 		}
 		strcat(admin_response, "R\n");
+		int i = 0;
+		while (admin_response[i] != '\0'){
+			IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response[i]);
+			usleep(10000) ;
+			i++;
+		}
 		printf("\nResponse: %s\n", admin_response);
-		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
-		usleep(10000);
 		memset(admin_response,0,strlen(admin_response));
 	}
 	else if(FIR_out[0] > LEFTLIM){
@@ -608,9 +614,13 @@ int admin_actions(){
 			FIR_out[0] = x_read;
 		}
 		strcat(admin_response, "L\n");
+		int i = 0;
+		while (admin_response[i] != '\0'){
+			IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response[i]);
+			usleep(10000) ;
+			i++;
+		}
 		printf("\nResponse: %s\n", admin_response);
-		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
-		usleep(10000);
 		memset(admin_response,0,strlen(admin_response));
 	}
 
@@ -618,21 +628,25 @@ int admin_actions(){
 	//////send button///////
 	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
 	if((button_datain &= 0b0000000001)){
-		strcat(admin_response, "1\n"); //1 means click to go into the game/leaderboard...
-		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+		strcat(admin_response, "S\n"); //1 means click to go into the game/leaderboard...
+		int i = 0;
+		while (admin_response[i] != '\0'){
+			IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response[i]);
+			i++;
+			usleep(10000) ;
+		}
 		printf("\nSending: %s\n", admin_response);
-		usleep(10000);
 		memset(admin_response,0,strlen(admin_response));
 	}
-	//reset button
-	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
-	if((button_datain &= 0b0000000010)){
-		strcat(admin_response, "2\n"); //2 means back out of leaderboard if possible...
-		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
-		printf("\nSending: %s\n", admin_response);
-		usleep(10000);
-		memset(admin_response,0,strlen(admin_response));
-	}
+//	//reset button
+//	button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+//	if((button_datain &= 0b0000000010)){
+//		strcat(admin_response, "2\n"); //2 means back out of leaderboard if possible...
+//		IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, admin_response);
+//		printf("\nSending: %s\n", admin_response);
+//		usleep(10000);
+//		memset(admin_response,0,strlen(admin_response));
+//	}
 	else {
 		usleep(50000);
 	}
@@ -661,7 +675,8 @@ int main() {
     	/////////////////////
     	///receiving shit////
 		serverdata = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE); //watch out this is IORD not IOWR...
-		printf("Server data: %d \n", serverdata);
+		//printf("Server data: %d \n", serverdata);
+		usleep(10000);
 //		if(serverdata == 1 || serverdata == 2)
 		//calling the display functions and updating the current and previous serverdata chars;
 		if((prevserverdata != serverdata)){ //if the old response and current one are not the same then we want to update the display
@@ -684,11 +699,10 @@ int main() {
 			//printf("In the admin area:");
 			admin_actions();
 		}
-		else{
-			//printf("In wordle:");
-			start_Wordle();
+		else if(serverdata == 2){
+			//printf("In game :");
+			start_game();
 		}
-
 
 
 

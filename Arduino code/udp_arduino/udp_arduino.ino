@@ -15,8 +15,8 @@ unsigned int localUdpPort = 11000;
 
 
 //Server connect to WiFi Network
-const char *ssid = "BT-GCCK22";  //Enter your wifi SSID
-const char *password = "X4dTeaELCygRkQ";  //Enter your wifi Password
+const char *ssid = "DESKTOP-6F3P5EH 1900";  //Enter your wifi SSID
+const char *password = "L;5189d0";  //Enter your wifi Password
 
 int count=0;
 //=======================================================================
@@ -55,37 +55,40 @@ void loop() {
     char packetBuffer[256];
     delay(10);
     if (Udp.parsePacket()) {
+      Serial.println("In the statement");
       int len = Udp.read(packetBuffer, 255);
       if (len > 0) {
         packetBuffer[len] = 0;
       }
-      //print packetBuffer
+      ////////////////////////
+      //ADMIN IF STATEMENT 
       //Serial.println(packetBuffer);
       //Send data to FPGA for processing 
       if(strcmp(packetBuffer, "1")==0){
-        Serial.write(1); 
+        memset(receivedChars,0,strlen(receivedChars));
         delay(1000);
-        //read back from the FPGA
-        recvWithEndMarker();
-        
+        while(strlen(receivedChars)< 1){
+            Serial.write(1); // indicates admin on the FPGA... 
+            recvWithEndMarker();
+           //showNewData();
+        }
+        Serial.print("FPGA UART: ");
+        Serial.print(receivedChars);
+        delay(1000);
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.write(receivedChars);
+        Udp.endPacket();
       }
       delay(1000);
-      //showing where the packet came from (debugging)
-//      Serial.print("Received packet from ");
-//      IPAddress remoteIp = Udp.remoteIP();
-//      Serial.print(remoteIp);
-//      Serial.print(", port ");
-//      Serial.println(Udp.remotePort());
       
-      //sending stuff
-      //sending JTAG stuff
+      ///YOUR TURN STUFF////
       if(strcmp(packetBuffer, "your turn")==0){
          //resetting the previous receivedChars
          memset(receivedChars,0,strlen(receivedChars));
          //printing what was sent by client
          //only send data once it has reached at least 4 characters.
          delay(1000); //need them to allow the buffer some time
-         while(strlen(receivedChars)< 4){
+         while(strlen(receivedChars)< 5){
             Serial.write(2); //2 indicates play on the FPGA... 
             recvWithEndMarker();
            //showNewData();
@@ -93,27 +96,16 @@ void loop() {
          delay(1000);
          Serial.print("FPGA UART: ");
          Serial.print(receivedChars);
+         delay(1000);
          Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
          Udp.write(receivedChars);
          Udp.endPacket();
       }
-//        ////
     }
+
     
-
-
-//    Serial.println("Sent a hi");
-
-  
     
-        //Send Data to connected client
-//        while(Serial.available()>0)
-//        {
-//          client.write(Serial.read());
-//        }
-//      }
-
-    }
+}
 
 
 
