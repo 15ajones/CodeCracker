@@ -70,67 +70,68 @@ def inputListen():
         # message = message.decode()
         message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
-        if message == "right":
-            if b1['relief'] == SOLID:
-                b2['relief'] = SOLID
-                b1['relief'] = GROOVE
-                b1['fg'] = "black"
-                b2['fg'] = "red"
-            elif b2['relief'] == SOLID:
-                b3['relief'] = SOLID
-                b2['relief'] = GROOVE
-                b2['fg'] = "black"
-                b3['fg'] = "red"
-            else:
-                print("bad move")
+        if message != "":
+            if message == "right":
+                if b1['relief'] == SOLID:
+                    b2['relief'] = SOLID
+                    b1['relief'] = GROOVE
+                    b1['fg'] = "black"
+                    b2['fg'] = "red"
+                elif b2['relief'] == SOLID:
+                    b3['relief'] = SOLID
+                    b2['relief'] = GROOVE
+                    b2['fg'] = "black"
+                    b3['fg'] = "red"
+                else:
+                    print("bad move")
 
-        if message == "left":
-            if b2['relief'] == SOLID:
-                b1['relief'] = SOLID
-                b2['relief'] = GROOVE
-                b2['fg'] = "black"
-                b1['fg'] = "red"
-            elif b3['relief'] == SOLID:
-                b2['relief'] = SOLID
-                b3['relief'] = GROOVE
-                b3['fg'] = "black"
-                b2['fg'] = "red"
-            else:
-                print("bad move")
+            if message == "left":
+                if b2['relief'] == SOLID:
+                    b1['relief'] = SOLID
+                    b2['relief'] = GROOVE
+                    b2['fg'] = "black"
+                    b1['fg'] = "red"
+                elif b3['relief'] == SOLID:
+                    b2['relief'] = SOLID
+                    b3['relief'] = GROOVE
+                    b3['fg'] = "black"
+                    b2['fg'] = "red"
+                else:
+                    print("bad move")
 
-        if message == "select":
-            if b1['relief'] == SOLID:
-                threadGameOne = threading.Thread(target=startGameOne, daemon=True)
-                threadGameOne.start()
-            elif b2['relief'] == SOLID:
-                threadGameTwo = threading.Thread(target=startGameTwo, daemon=True)
-                threadGameTwo.start()
-            else:
-                tab.select(leaderboardTab)
+            if message == "select":
+                if b1['relief'] == SOLID:
+                    threadGameOne = threading.Thread(target=startGameOne, daemon=True)
+                    threadGameOne.start()
+                elif b2['relief'] == SOLID:
+                    threadGameTwo = threading.Thread(target=startGameTwo, daemon=True)
+                    threadGameTwo.start()
+                else:
+                    tab.select(leaderboardTab)
 
-        if message.split()[0] == "leaderboard":
-            print("Updating Scores")
-            msg = message.split()
-            if msg[1] == p1_name or p1_name == "None":
-                p1_name = msg[1]
-                p1_score = msg[2]
-                p1Label['text'] = p1_name + "\t\t" + str(p1_score)
-            elif msg[1] == p2_name or p2_name == "None":
-                p2_name = msg[1]
-                p2_score = msg[2]
-                p2Label['text'] = p2_name + "\t\t" + str(p2_score)
-            elif msg[1] == p3_name or p3_name == "None":
-                p3_name = msg[1]
-                p3_score = msg[2]
-                p3Label['text'] = p3_name + "\t\t" + str(p3_score)
+            if message.split()[0] == "leaderboard":
+                print("Updating Scores")
+                msg = message.split()
+                if msg[1] == p1_name or p1_name == "None":
+                    p1_name = msg[1]
+                    p1_score = msg[2]
+                    p1Label['text'] = p1_name + "\t\t" + str(p1_score)
+                elif msg[1] == p2_name or p2_name == "None":
+                    p2_name = msg[1]
+                    p2_score = msg[2]
+                    p2Label['text'] = p2_name + "\t\t" + str(p2_score)
+                elif msg[1] == p3_name or p3_name == "None":
+                    p3_name = msg[1]
+                    p3_score = msg[2]
+                    p3Label['text'] = p3_name + "\t\t" + str(p3_score)
 
-        if message == "scores":
-            print(p1_score, p2_score, p3_score)
-        if message == "menu":
-            tab.select(gameSelection)
-            message = "."
-        if message == "exit" :
-            break
+            if message == "scores":
+                print(p1_score, p2_score, p3_score)
+            if message == "menu":
+                tab.select(gameSelection)
+                message = "."
+            if message == "exit" :
+                break
 
 
 def startGameOne():
@@ -186,7 +187,7 @@ def startGameTwo():
 
     playerlabel2['text'] = "READY"
     movelabel['text'] = "LAST MOVE:"
-    remainingplayers['text'] = "PLAYER_1\tPLAYER_2\tPLAYER_3"
+    remainingplayers['text'] = ""
 
 
     while True:
@@ -199,8 +200,15 @@ def startGameTwo():
                 playerlabel2['text'] = x[1] + ", YOUR TURN"
             if x[0] == "move" :
                 movelabel['text'] = "LAST MOVE: " + x[1]
-            if x[0] == "eliminated" :
-                remainingplayers['text'] = remainingplayers['text'].replace(x[1], "")
+            if x[0] == "players" :
+                remainingplayers['text'] = ""
+                for i in range(len(x)) :
+                    if i != 0 :
+                        if remainingplayers['text'] == "" :
+                            remainingplayers['text'] = x[i]
+                        else :
+                            remainingplayers['text'] = remainingplayers['text'] + "\t" + x[i]
+                message = "."
             if x[0] == "winner" :
                 playerlabel2['text'] = "WINNER: " + x[1] 
         
