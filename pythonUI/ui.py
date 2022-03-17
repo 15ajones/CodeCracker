@@ -11,7 +11,7 @@ import socket
 from grpc import xds_channel_credentials
 
 # server stuff
-host_name = 'localhost'
+host_name = '35.176.178.111'
 host_port = 12000
 
 ui_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -59,13 +59,13 @@ textFont = font.Font(family='Arial', weight="bold", size=16)
 def inputListen():
     global message, p1_score, p2_score, p3_score
     while True:
-        print("[INPUT]:", end=' ')
-        sys.stdout.flush()
-        # print("waiting for message")
-        # message = ui_socket.recv(1024)
-        # print("message received")
-        # message = message.decode()
-        message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
+        # print("[INPUT]:", end=' ')
+        # sys.stdout.flush()
+        print("waiting for message")
+        message = ui_socket.recv(1024)
+        print("message received")
+        message = message.decode()
+        # message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
         if message != "" : 
             if message == "right":
