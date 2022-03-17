@@ -8,16 +8,16 @@ import sys
 from xml.etree.ElementPath import get_parent_map
 import socket
 
-from grpc import xds_channel_credentials
+#from grpc import xds_channel_credentials
 
 # server stuff
-host_name = '35.176.178.111'
+host_name = '35.179.90.57'
 host_port = 12000
 
 ui_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 ui_socket.bind(('', 11000))
 
-ping = "hello server"
+ping = "ui"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
 
 message = ""
