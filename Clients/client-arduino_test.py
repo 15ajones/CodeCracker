@@ -78,14 +78,16 @@ def main():
                 # ec2_client_socket.sendto(str.encode(server_msg), (server_name, server_port))
 
 
-                if game_select_msg == "select":
+                if game_select_msg == "S":      #board pressed select game
                     # msg = ec2_client_socket.recvfrom(1024)      # recieves game name 
                     # server_msg = msg.decode()
+                    print("game selected")  
+
                     server_msg = input()
 
                     if server_msg == "memory" or server_msg == "mastermind":
                         in_game =  True
-                        msg = server_msg  # tells admin arduino what game is selected
+                        msg = "start game"  # tells admin arduino what game is selected
                         board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
                         print("sent to board: " + msg)   
 
