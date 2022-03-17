@@ -21,6 +21,9 @@ ping = "hello server"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
 
 message = ""
+p1_name = "None"
+p2_name = "None"
+p3_name = "None"
 p1_score = 0
 p2_score = 0
 p3_score = 0
@@ -57,7 +60,7 @@ buttonFont = font.Font(family='Arial', weight="bold", size=8)
 textFont = font.Font(family='Arial', weight="bold", size=16)
 
 def inputListen():
-    global message, p1_score, p2_score, p3_score
+    global message, p1_score, p2_score, p3_score, p1_name, p2_name, p3_name
     while True:
         # print("[INPUT]:", end=' ')
         # sys.stdout.flush()
@@ -67,7 +70,7 @@ def inputListen():
         message = message.decode()
         # message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
-        if message != "" : 
+        if message != " ":
             if message == "right":
                 if b1['relief'] == SOLID:
                     b2['relief'] = SOLID
@@ -109,19 +112,18 @@ def inputListen():
             if message.split()[0] == "leaderboard":
                 print("Updating Scores")
                 msg = message.split()
-                for x in range(len(msg)):
-                    if msg[x] == "user1":
-                        p1_score = msg[x+1]
-                        print("p1 score: ", msg[x+1])
-                    if msg[x] == "user2":
-                        p2_score = msg[x+1]
-                        print("p2 score: ", msg[x+1])
-                    if msg[x] == "user3":
-                        p3_score = msg[x+1]
-                        print("p3 score: ", msg[x+1])
-                    p1Label['text'] = "1\t\t" + str(p1_score)
-                    p2Label['text'] = "2\t\t" + str(p2_score)
-                    p3Label['text'] = "3\t\t" + str(p3_score)
+                if msg[1] == p1_name or p1_name == "None":
+                    p1_name = msg[1]
+                    p1_score = msg[2]
+                    p1Label['text'] = p1_name + "\t\t" + str(p1_score)
+                elif msg[1] == p2_name or p2_name == "None":
+                    p2_name = msg[1]
+                    p2_score = msg[2]
+                    p2Label['text'] = p2_name + "\t\t" + str(p2_score)
+                elif msg[1] == p3_name or p3_name == "None":
+                    p3_name = msg[1]
+                    p3_score = msg[2]
+                    p3Label['text'] = p3_name + "\t\t" + str(p3_score)
 
             if message == "scores":
                 print(p1_score, p2_score, p3_score)
@@ -248,11 +250,11 @@ titleLabel = Label(leaderboardTab, text="LEADERBOARD", fg='black', font=textFont
 titleLabel.pack(pady = 50, anchor="center")
 scoresLabel = Label(leaderboardTab, text="PLAYER\t\tSCORE", fg='black', font=textFont)
 scoresLabel.pack(pady = 40, anchor="center")
-p1Label = Label(leaderboardTab, text="1\t\t0", fg='black', font=textFont)
+p1Label = Label(leaderboardTab, text="None\t\t0", fg='black', font=textFont)
 p1Label.pack(pady = 20, anchor="center")
-p2Label = Label(leaderboardTab, text="2\t\t0", fg='black', font=textFont)
+p2Label = Label(leaderboardTab, text="None\t\t0", fg='black', font=textFont)
 p2Label.pack(pady = 20, anchor="center")
-p3Label = Label(leaderboardTab, text="3\t\t0", fg='black', font=textFont)
+p3Label = Label(leaderboardTab, text="None\t\t0", fg='black', font=textFont)
 p3Label.pack(pady = 20, anchor="center")
 # use ipAddressEntry.get() & portEntry.get() to get TCP things
 
