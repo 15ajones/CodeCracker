@@ -176,11 +176,10 @@ def main():
                 players.append(player_to_add)
                 add_user(str(cadd), str(cmsg[0]), is_admin)
                 number_players+=1
-                cmsg = "player added"
-                print(cmsg)
-                server_socket.sendto(cmsg.encode(), cadd)
-                cmsg = "second added player"
-                print(cmsg)
+                if is_admin:
+                    cmsg = "admin"
+                else:
+                    cmsg = "user"
                 server_socket.sendto(cmsg.encode(), cadd)
         else:
             #game has started
