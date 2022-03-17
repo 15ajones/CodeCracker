@@ -20,22 +20,24 @@ def main():
     # board_client_socket.bind(('', 15000))
 
     #the server name and port client wishes to access
-    server_name = '35.176.178.191'  # public ipv4 of ec2
+    server_name = '35.179.90.57'  # public ipv4 of ec2
     server_port = 12000                        
     #create a TCP client socket
-    ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # Bind board 1 socket to port 11000
-    ec2_client_socket.bind(('', 11000))  # change port for each board
+    ec2_client_socket.bind(('', 15000))  # Board 1: 16000
 
     print("Running UDP client for board 1...")
     #user presses button to join game
     # Add user/player to database
     msg = "board1"
     ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
+    print("sent to server")
 
 
-    msg = ec2_client_socket.recvfrom(1024)  # recieves user or admin
+    msg, cadd = ec2_client_socket.recvfrom(1024)  # recieves user or admin
     server_msg = msg.decode()
+    print("received " + server_msg)    #always print
     # server_msg = input("admin?")
 
 
@@ -69,15 +71,16 @@ def main():
                 # game_select_msg = board_client_socket.recv(1024)    # left/right
                 # game_select_msg = game_select_msg.decode()
                 # print("received code: " + game_select_msg)           
-                game_select_msg = input("Input: L/R/S")
+                game_select_msg = input("Input: L/R/S: ")
                 #send selected game to the server
                 server_msg = "admin " + game_select_msg  # admin select left/right
                 ec2_client_socket.sendto(str.encode(server_msg), (server_name, server_port))
 
 
                 if game_select_msg == "S":      #board pressed select game
-                    msg = ec2_client_socket.recvfrom(1024)      # recieves game name 
+                    msg, cadd = ec2_client_socket.recvfrom(1024)      # recieves game name 
                     server_msg = msg.decode()
+                    print("game received: " + server_msg) 
                     print("game selected")  
 
                     if server_msg == "memory" or server_msg == "mastermind":
@@ -85,13 +88,15 @@ def main():
                         # msg = "start game"  # tells admin arduino what game is selected
                         # board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
                         # print("sent to board: " + msg)   
-
+                
                 # if not start then continue 
                 # if start then in_game == true
             
             else:   
-                msg = ec2_client_socket.recvfrom(1024)  #user receives game name
+                msg, cadd = ec2_client_socket.recvfrom(1024)  #user receives game name
                 server_msg = msg.decode()
+                print("received: " + server_msg)    #always print
+
 
                 if server_msg == "memory":
                     in_game = True
@@ -106,9 +111,9 @@ def main():
                     # print("sent to board: " + msg)   
     
         else: #game state (during rounds)
-            # msg = ec2_client_socket.recvfrom(1024)      # recieves game name 
-            # server_msg = msg.decode()
-            server_msg = input()
+            msg, cadd = ec2_client_socket.recvfrom(1024)      # your 
+            server_msg = msg.decode()
+            print("received: " + server_msg)    #always print
 
             if server_msg == "game over":    # if eliminated -> receives game over message instead
                 # Send game over message to board
@@ -118,7 +123,6 @@ def main():
 
                 in_game = False
                 # game_name = ""
-                continue 
             elif server_msg == "your turn":     #server_msg == "your turn"
                 # Send message to board: your turn
                 # board_msg = "your turn"
