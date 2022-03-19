@@ -139,21 +139,22 @@ def main():
             player_to_add = [str(cadd[0]), int(cadd[1])]
             print(str(player_to_add))
             cmsg = cmsg.decode()
+            print(cmsg)
             cmsg = cmsg.split()
 
             if len(cmsg)==2 and cmsg[0]=="admin":
-                if cmsg[1] == "left":
+                if cmsg[1] == "L":
                     if UI_cadd != "none" and current_menu_select > 0:
                         cmsg = "left"
                         server_socket.sendto(cmsg.encode(), UI_cadd)
                         current_menu_select-=1
-                elif cmsg[1] == "right":
+                elif cmsg[1] == "R":
                     if UI_cadd != "none" and current_menu_select < 2:
                         cmsg = "right"
                         server_socket.sendto(cmsg.encode(), UI_cadd)
                         current_menu_select+=1
 
-                elif cmsg[1] == "select":
+                elif cmsg[1] == "S":
                     selection = menu_options[current_menu_select]
                     if selection == "leaderboard":
                         if UI_cadd != "none":
@@ -173,6 +174,7 @@ def main():
                         for i in range(5):
                             x = int(randrange(4))
                             wordle+=wordle_characters[x]
+                        print(wordle)
                         cmsg = "mastermind"
                         for player in players:
                             server_socket.sendto(cmsg.encode(), (player[0], int(player[1])))
@@ -248,7 +250,7 @@ def main():
                                 server_socket.sendto(cmsg.encode(), UI_cadd)
                             if correct_guess: # if correct guess we send a message saying game over to everyone, and end this section
                                 if UI_cadd != "none":
-                                    cmsg = "winner " +  player[0] 
+                                    cmsg = "winner " +  str(player[0]) 
                                     server_socket.sendto(cmsg.encode(), UI_cadd)
                                 game_started = False
                                 cmsg = "game over"
