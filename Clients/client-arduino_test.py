@@ -12,7 +12,7 @@ import os.path
 def main():
 
     #the server name and port client wishes to access
-    board_server_name = '192.168.137.111'  #ip of arduino (subject to change - fetch from serial monitor)
+    board_server_name = '192.168.137.141'  #ip of arduino (subject to change - fetch from serial monitor)
     board_server_port = 11000
     #create a TCP client socket
     board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -83,7 +83,7 @@ def main():
                     # server_msg = msg.decode()
                     print("game selected")  
 
-                    server_msg = input()
+                    server_msg = input(("choose game: ")
 
                     if server_msg == "memory" or server_msg == "mastermind":
                         in_game =  True
@@ -97,7 +97,7 @@ def main():
             else:   
                 # msg = ec2_client_socket.recvfrom(1024)  #user receives game name
                 # server_msg = msg.decode()
-                server_msg = input()
+                server_msg = input("choose game: ")
 
                 if server_msg == "memory" or server_msg == "mastermind":
                         in_game =  True
@@ -109,7 +109,7 @@ def main():
         else: #game state (during rounds)
             # msg = ec2_client_socket.recvfrom(1024)      # recieves game name 
             # server_msg = msg.decode()
-            server_msg = input()
+            server_msg = input("your turn/game over: ")
 
             if server_msg == "game over":    # if eliminated -> receives game over message instead
                 # Send game over message to board
@@ -119,7 +119,7 @@ def main():
 
                 in_game = False
                 game_name = ""
-                continue 
+                 
             elif server_msg == "your turn":     #server_msg == "your turn"
                 # Send message to board: your turn
                 board_msg = "your turn"
