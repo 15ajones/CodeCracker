@@ -45,6 +45,7 @@ int timer = CLOCKINIT;  //Standard speed for movement
 
 char admin_response[3];
 char game_response[100];
+int serverdata; // response from server - we are going to make it an integer for simplicity...
 
 ///////////////////////////////////////////////////////////////////////////
 /////DISPLAY FUNCTIONS///////
@@ -60,7 +61,7 @@ void initializeDisplay(){
 char updateText(int serverdata){ // in FPGA change this to if there is any new input
 
 	if (serverdata == 2){ // 2 is the code when "your turn" is sent by the server
-		static_flag = 1; //play scrolls through
+		static_flag = 0; //play scrolls through
 		admin_flag = 0;
 		enteredText[0] = 'p';
 		length = getActualText();
@@ -671,11 +672,22 @@ int main() {
     ///Code///
     while (1) {
 
-    	int serverdata; // response from server - we are going to make it an integer for simplicity...
     	/////////////////////
     	///receiving shit////
-		serverdata = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE); //watch out this is IORD not IOWR...
-		//printf("Server data: %d \n", serverdata);
+    	serverdata = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE); //watch out this is IORD not IOWR...
+
+    	//check if this is better:
+    	//get serial status
+//    	int stat = IORD_ALTERA_AVALON_UART_STATUS(UART_0_BASE);
+//    		//character receiving
+//    		if (stat & ALTERA_AVALON_UART_STATUS_RRDY_MSK) { //Check if UART is ready to offer access to the RXDATA register
+//    			serverdata = IORD_ALTERA_AVALON_UART_RXDATA(UART_0_BASE);
+//    			IOWR_ALTERA_AVALON_UART_STATUS(UART_0_BASE, 0); //clear the status bits again
+//    		}
+//    		IOWR_ALTERA_AVALON_UART_STATUS(UART_0_BASE, 0); //reset interrupt
+    	printf("Server data: %d \n", serverdata);
+
+
 		usleep(10000);
 //		if(serverdata == 1 || serverdata == 2)
 		//calling the display functions and updating the current and previous serverdata chars;

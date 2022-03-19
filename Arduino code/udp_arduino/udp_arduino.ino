@@ -17,6 +17,7 @@ unsigned int localUdpPort = 11000;
 //Server connect to WiFi Network
 const char *ssid = "DESKTOP-6F3P5EH 1900";  //Enter your wifi SSID
 const char *password = "L;5189d0";  //Enter your wifi Password
+// X4dTeaELCygRkQ
 
 int count=0;
 //=======================================================================
@@ -61,6 +62,8 @@ void loop() {
         packetBuffer[len] = 0;
       }
       ////////////////////////
+      Serial.println(packetBuffer);
+      delay(1000);
       //ADMIN IF STATEMENT 
       //Serial.println(packetBuffer);
       //Send data to FPGA for processing 
@@ -100,6 +103,10 @@ void loop() {
          Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
          Udp.write(receivedChars);
          Udp.endPacket();
+      }
+      // GAME OVER COMMAND
+      else{
+        Serial.write(100); //random integer just to refresh the board.  
       }
     }
 
