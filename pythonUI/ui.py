@@ -7,15 +7,16 @@ import threading
 import sys
 from xml.etree.ElementPath import get_parent_map
 import socket
+import time
 
 #from grpc import xds_channel_credentials
 
 # server stuff
-host_name = '35.179.90.57'
+host_name = '18.132.60.200'
 host_port = 12000
 
 ui_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-ui_socket.bind(('', 11000))
+ui_socket.bind(('', 11090))
 
 ping = "ui"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
@@ -60,14 +61,16 @@ buttonFont = font.Font(family='Arial', weight="bold", size=8)
 textFont = font.Font(family='Arial', weight="bold", size=16)
 
 def inputListen():
+    print("thread input listen")
     global message, p1_score, p2_score, p3_score, p1_name, p2_name, p3_name
     while True:
         # print("[INPUT]:", end=' ')
         # sys.stdout.flush()
         print("waiting for message")
         message = ui_socket.recv(1024)
-        print("message received")
+        #print("message received")
         message = message.decode()
+        
         # message = sys.stdin.readline().rstrip()          #Testing without server, comment 4 line above
         print(message)
         if message != " ":
@@ -135,6 +138,7 @@ def inputListen():
 
 
 def startGameOne():
+    print("thread game 1")
     tab.select(game1Tab)
     global message
 
@@ -146,8 +150,10 @@ def startGameOne():
 
 
     while True:
+
         if message != "" : 
             x = message.split()
+
 
             if x[0] == "menu" :
                 canvas.destroy()
@@ -160,7 +166,9 @@ def startGameOne():
                 #outcomelabel['text'] = x[1]
             elif x[0] == "outcome" :
                 #colours = ['','','','','']
+                print("outcome received")
                 for i in range(len(colours)) :
+                    print("x[1][i] is: " + x[1][i])
                     if x[1][i] == 'g' :
                         colours[i] = 'green'
                     elif x[1][i] == 'y' :
@@ -172,7 +180,7 @@ def startGameOne():
                 canvas.create_rectangle(200,5,280,80, fill=colours[2], outline=colours[2])
                 canvas.create_rectangle(300,5,380,80, fill=colours[3], outline=colours[3])
                 canvas.create_rectangle(400,5,480,80, fill=colours[4], outline=colours[4])
-                message = "."    # need to clear message else it loops infinitely back to outcome
+                message = ""    # need to clear message else it loops infinitely back to outcome
 
                 
                 #print(canvas.find_all())    # prints all canvas items active
@@ -182,6 +190,7 @@ def startGameOne():
         game1Tab.update()
 
 def startGameTwo():
+    print("thread game 2")
     tab.select(game2Tab)
     global message
 
