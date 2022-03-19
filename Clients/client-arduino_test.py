@@ -83,9 +83,9 @@ def main():
                     # server_msg = msg.decode()
                     print("game selected")  
 
-                    server_msg = input(("choose game: ")
+                    server_msg = input("choose game: ")
 
-                    if server_msg == "memory" or server_msg == "mastermind":
+                    if (server_msg == "memory" or server_msg == "mastermind"):
                         in_game =  True
                         msg = "start game"  # tells admin arduino what game is selected
                         board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
