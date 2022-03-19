@@ -20,7 +20,7 @@ def main():
     # board_client_socket.bind(('', 15000))
 
     #the server name and port client wishes to access
-    server_name = '35.179.90.57'  # public ipv4 of ec2
+    server_name = '18.132.60.200'  # public ipv4 of ec2
     server_port = 12000                        
     #create a TCP client socket
     ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

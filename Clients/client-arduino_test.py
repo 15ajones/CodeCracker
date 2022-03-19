@@ -12,7 +12,7 @@ import os.path
 def main():
 
     #the server name and port client wishes to access
-    board_server_name = '192.168.137.141'  #ip of arduino (subject to change - fetch from serial monitor)
+    board_server_name = '192.168.137.126'  #ip of arduino (subject to change - fetch from serial monitor)
     board_server_port = 11000
     #create a TCP client socket
     board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -20,7 +20,7 @@ def main():
     board_client_socket.bind(('', 15000))
 
     # #the server name and port client wishes to access
-    # server_name = '35.176.178.191'  # public ipv4 of ec2
+    # server_name = '35.176.178.191'  # public ipv4 of ec2ad
     # server_port = 12000                        
     # #create a TCP client socket
     # ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,7 +30,7 @@ def main():
     # print("Running UDP client for board 1...")
     # #user presses button to join game
     # # Add user/player to database
-    # msg = "board1"
+    # msg = "board1"no
     # ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
 
     # msg = "Am I admin?"
