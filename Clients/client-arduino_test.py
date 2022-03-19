@@ -12,7 +12,7 @@ import os.path
 def main():
 
     #the server name and port client wishes to access
-    board_server_name = '192.168.137.137'  #ip of arduino (subject to change - fetch from serial monitor)
+    board_server_name = '192.168.137.141'  #ip of arduino (subject to change - fetch from serial monitor)
     board_server_port = 11000
     #create a TCP client socket
     board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -83,7 +83,7 @@ def main():
                     # server_msg = msg.decode()
                     print("game selected")  
 
-                    server_msg = input()
+                    server_msg = input(("choose game: ")
 
                     if server_msg == "memory" or server_msg == "mastermind":
                         in_game =  True
