@@ -12,12 +12,12 @@ import os.path
 def main():
 
     #the server name and port client wishes to access
-    board_server_name = '192.168.137.8'  #ip of arduino (subject to change - CHANGES
+    board_server_name = '192.168.137.38'  #ip of arduino (subject to change - CHANGES
     board_server_port = 11000
     #create a TCP client socket
     board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #binding to a port and address so that the server can send information back
-    board_client_socket.bind(('', 15010))
+    board_client_socket.bind(('', 17080))
 
     #the server name and port client wishes to access
     server_name = '18.132.60.200'  # public ipv4 of ec2
@@ -25,12 +25,12 @@ def main():
     #create a TCP client socket
     ec2_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # Bind board 1 socket to port 11000
-    ec2_client_socket.bind(('', 16190))  # change port for each board
+    ec2_client_socket.bind(('', 18190))  # change port for each board
 
     print("Running UDP client for board 1...")
     #user presses button to join game
     # Add user/player to database
-    msg = "Omar"
+    msg = "Rohan"
     ec2_client_socket.sendto(str.encode(msg), (server_name, server_port))
 
     # msg = "Am I admin?"
@@ -59,7 +59,7 @@ def main():
         if not in_game:        #menu screen state
             if is_admin: #user decides which game
                 
-                time.sleep(1) #added to give delay before sending admin to board (for game over issue)
+                time.sleep(2) #added to give delay before sending admin to board (for game over issue)
                 # Send message to board: WAITING FOR GAME   
                 msg = "1"  # tells admin arduino to select game
                 board_client_socket.sendto(msg.encode(), (board_server_name, board_server_port))
@@ -124,7 +124,6 @@ def main():
                 print("sent: " + board_msg)
 
 
-
                 # receive input passcode from board
                 inputpass_msg = board_client_socket.recv(1024)
                 inputpass_msg = inputpass_msg.decode()
@@ -134,9 +133,6 @@ def main():
                 server_msg = inputpass_msg  
                 ec2_client_socket.sendto(str.encode(server_msg), (server_name, server_port))
         
-
-
-
 
 
 if __name__ == '__main__':
