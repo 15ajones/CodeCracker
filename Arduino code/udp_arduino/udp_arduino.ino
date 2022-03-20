@@ -1,4 +1,4 @@
-#include <ESP8266WiFi.h>
+  #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
 #define SendKey 0  //Button to send data Flash BTN on NodeMCU
@@ -54,7 +54,7 @@ void loop() {
     
     //buffer for incoming messages
     char packetBuffer[256];
-    delay(10);
+    delay(100);
     if (Udp.parsePacket()) {
       Serial.println("In the statement");
       int len = Udp.read(packetBuffer, 255);
@@ -62,8 +62,8 @@ void loop() {
         packetBuffer[len] = 0;
       }
       ////////////////////////
-      Serial.println(packetBuffer);
-      delay(1000);
+//      Serial.println(packetBuffer);
+//      delay(1000);
       //ADMIN IF STATEMENT 
       //Serial.println(packetBuffer);
       //Send data to FPGA for processing 
@@ -71,7 +71,7 @@ void loop() {
         memset(receivedChars,0,strlen(receivedChars));
         delay(1000);
         while(strlen(receivedChars)< 1){
-            Serial.write(1); // indicates admin on the FPGA... 
+            Serial.write(1  ); // indicates admin on the FPGA... 
             recvWithEndMarker();
            //showNewData();
         }
@@ -81,6 +81,9 @@ void loop() {
         Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(receivedChars);
         Udp.endPacket();
+        delay(20);
+        Serial.write("100");
+        delay(20);
       }
       delay(1000);
       
@@ -103,6 +106,9 @@ void loop() {
          Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
          Udp.write(receivedChars);
          Udp.endPacket();
+         delay(20);
+         Serial.write("100");
+         delay(20);
       }
       // GAME OVER COMMAND
       else{
