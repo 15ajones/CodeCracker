@@ -33,8 +33,8 @@ p3_score = 0
 
 # root window
 root = tk.Tk()
-root.geometry("1340x780")
-root.configure(bg = "#ffffff")
+root.geometry("1920x1080")
+root.configure(bg = "#323232")
 root.title('InfoProc')
 style = ttk.Style()
 style.layout('TNotebook.Tab', [])
