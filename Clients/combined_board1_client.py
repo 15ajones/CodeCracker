@@ -12,7 +12,7 @@ import os.path
 def main():
 
     #the server name and port client wishes to access
-    board_server_name = '192.168.137.8'  #ip of arduino (subject to change - CHANGES
+    board_server_name = '192.168.137.70'  #ip of arduino (subject to change - CHANGES
     board_server_port = 11000
     #create a TCP client socket
     board_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -103,6 +103,7 @@ def main():
 
     
         else: #game state (during rounds)
+            print("waiting for turn...") 
             msg, cadd = ec2_client_socket.recvfrom(1024)      # your 
             server_msg = msg.decode()
             print("received: " + server_msg)    #always print
