@@ -15,11 +15,11 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 # server stuff
-host_name = '35.179.90.57'
+host_name = '18.132.60.200'
 host_port = 12000
 
 ui_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-ui_socket.bind(('', 11000))
+ui_socket.bind(('', 11090))
 
 ping = "ui"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
