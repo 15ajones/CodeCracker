@@ -153,6 +153,7 @@ def main():
                         cmsg = "right"
                         server_socket.sendto(cmsg.encode(), UI_cadd)
                         current_menu_select+=1
+                        print("sent")
 
                 elif cmsg[1] == "S":
                     selection = menu_options[current_menu_select]
@@ -163,6 +164,10 @@ def main():
                             time.sleep(5)
                             cmsg = "menu"
                             server_socket.sendto(cmsg.encode(), UI_cadd)
+                            print("sent")
+                        cmsg = "leaderboard"
+                        server_socket.sendto(cmsg.encode(), cadd)
+                        
 
                     elif selection == "mastermind":
                         game_type = "mastermind"
@@ -171,6 +176,7 @@ def main():
                         if UI_cadd != "none":
                             cmsg = "select"
                             server_socket.sendto(cmsg.encode(), UI_cadd)
+                            print("sent")
                         for i in range(5):
                             x = int(randrange(4))
                             wordle+=wordle_characters[x]
@@ -222,6 +228,7 @@ def main():
                             if UI_cadd != "none":
                                 cmsg = "turn " +  player[0] 
                                 server_socket.sendto(cmsg.encode(), UI_cadd)
+                                time.sleep(4)
                             cmsg = "your turn"
                             # print(cmsg)
                             # print(player[0])
@@ -245,13 +252,17 @@ def main():
                                 else:
                                     guess_reply += "r"
                                     correct_guess = False
+                            print("correct guess: ", correct_guess)
                             if UI_cadd != "none":
                                 cmsg = "outcome " +  guess_reply
                                 server_socket.sendto(cmsg.encode(), UI_cadd)
+                                print("sent outcome")
+                                time.sleep(5)
                             if correct_guess: # if correct guess we send a message saying game over to everyone, and end this section
                                 if UI_cadd != "none":
                                     cmsg = "winner " +  str(player[0]) 
                                     server_socket.sendto(cmsg.encode(), UI_cadd)
+                                    time.sleep(5)
                                 game_started = False
                                 cmsg = "game over"
                                 for x in players:
@@ -262,12 +273,13 @@ def main():
                                     server_socket.sendto(cmsg.encode(), UI_cadd)
                                     cmsg = "leaderboard omar 0"
                                     server_socket.sendto(cmsg.encode(), UI_cadd)
+                                    time.sleep(5)
                                 
                 
                 elif game_type == "memory":
                     if players_left == 1:
                         game_started = False
-                        for player in players:
+                        for player in memory_players:
                             if player!=0:
                                 winner = player
                                 break
@@ -275,11 +287,12 @@ def main():
                         for x in players:
                             server_socket.sendto(cmsg.encode(), (x[0], int(x[1])))
                         if UI_cadd != "none":
-                            cmsg = "winner " +  winner
+                            cmsg = "winner " +  str(winner[0])#change later
                             server_socket.sendto(cmsg.encode(), UI_cadd)
-                            time.sleep(5)
-                            cmsg = "menu " +  player[0]
+                            time.sleep(4)
+                            cmsg = "menu"
                             server_socket.sendto(cmsg.encode(), UI_cadd)
+                            time.sleep(2)
                             cmsg = "leaderboard omar 0"
                             server_socket.sendto(cmsg.encode(), UI_cadd)
 
@@ -289,8 +302,9 @@ def main():
                             cmsg = "players"
                             for x in memory_players:
                                 cmsg+=" "
-                                cmsg+=memory_players[0]
+                                cmsg+=str(x[0])
                             server_socket.sendto(cmsg.encode(), UI_cadd)
+                            time.sleep(4)
                         if not game_started:#if game has ended we can end the for loop and leave this section
                             break
                         i+=1
@@ -299,6 +313,7 @@ def main():
                         if UI_cadd != "none":
                             cmsg = "turn " +  player[0] 
                             server_socket.sendto(cmsg.encode(), UI_cadd)
+                            time.sleep(4)
                         cmsg = "your turn"
                         server_socket.sendto(cmsg.encode(), (player[0], int(player[1])))
                         cmsg, cadd = server_socket.recvfrom(2048)
@@ -311,6 +326,7 @@ def main():
                                 if UI_cadd != "none":
                                     cmsg = "move " + cmsg[-1]
                                     server_socket.sendto(cmsg.encode(), UI_cadd)
+                                    time.sleep(4)
                             else: #player got pattern wrong, is eliminated.
                                 memory_players[i] = 0;
                                 players_left-=1
