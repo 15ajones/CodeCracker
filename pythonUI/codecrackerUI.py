@@ -207,34 +207,48 @@ def startGameTwo():
     canvas = tk.Canvas(game2Tab, width=1280, height=720)
 
     playerlabel2['text'] = "READY"
-    movelabel['text'] = "LAST MOVE:"
+    movelabel['text'] = ""
     remainingplayers['text'] = ""
 
 
+    # while True:
+    #     if message != "" : 
+    #         x = message.split()
+
+    #         if x[0] == "menu" :
+    #             break
+    #         if x[0] == "turn" :
+    #             playerlabel2['text'] = x[1] + ", YOUR TURN"
+    #         if x[0] == "move" :
+    #             movelabel['text'] = "LAST MOVE: " + x[1]
+    #         if x[0] == "players" :
+    #             remainingplayers['text'] = ""
+    #             for i in range(len(x)) :
+    #                 if i != 0 :
+    #                     if remainingplayers['text'] == "" :
+    #                         remainingplayers['text'] = x[i]
+    #                     else :
+    #                         remainingplayers['text'] = remainingplayers['text'] + "\n" + x[i]
+    #             message = "."
+    #         if x[0] == "winner" :
+    #             playerlabel2['text'] = "WINNER: " + x[1] 
+    #             playsound('winner.mp3')
+        
+    #     game2Tab.update()
     while True:
-        if message != "" : 
+        if message != "" :
             x = message.split()
 
-            if x[0] == "menu" :
+            if x[0] == "menu":
                 break
-            if x[0] == "turn" :
-                playerlabel2['text'] = x[1] + ", YOUR TURN"
-            if x[0] == "move" :
-                movelabel['text'] = "LAST MOVE: " + x[1]
-            if x[0] == "players" :
-                remainingplayers['text'] = ""
-                for i in range(len(x)) :
-                    if i != 0 :
-                        if remainingplayers['text'] == "" :
-                            remainingplayers['text'] = x[i]
-                        else :
-                            remainingplayers['text'] = remainingplayers['text'] + "\n" + x[i]
-                message = "."
+            if x[0] == "start":
+                playerlabel2['text'] = "GO"
+                movelabel['text'] = x[1]
             if x[0] == "winner" :
-                playerlabel2['text'] = "WINNER: " + x[1] 
+                playerlabel2['text'] = "WINNER: " + x[1]
                 playsound('winner.mp3')
-        
         game2Tab.update()
+
 
             
             
@@ -489,5 +503,9 @@ exit()
 
 # menu -> back to game selection menu
 
+
+# game start -> display ready?
+# 5 letter message -> display  
+# winner name 
 
 
