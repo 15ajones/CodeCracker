@@ -8,6 +8,7 @@ import sys
 from xml.etree.ElementPath import get_parent_map
 import socket
 import os
+from playsound import playsound
 
 #from grpc import xds_channel_credentials
 abspath = os.path.abspath(__file__)
@@ -23,6 +24,10 @@ ui_socket.bind(('', 11000))
 ping = "ui"
 ui_socket.sendto(ping.encode(), (host_name, host_port))
 
+def playMusic():
+    print("Audio on")
+    playsound('music.mp3')
+
 message = ""
 p1_name = "None"
 p2_name = "None"
@@ -33,8 +38,8 @@ p3_score = 0
 
 # root window
 root = tk.Tk()
-root.geometry("1340x780")
-root.configure(bg = "#ffffff")
+root.geometry("1920x1080")
+root.configure(bg = "#323232")
 root.title('InfoProc')
 style = ttk.Style()
 style.layout('TNotebook.Tab', [])
@@ -192,6 +197,7 @@ def startGameOne():
                 #print(canvas.find_all())    # prints all canvas items active
             elif x[0] == "winner" :
                 playerlabel['text'] = "WINNER: " + x[1]
+                playsound('winner.mp3')
         canvas.place(x=200, y=400)
         game1Tab.update()
 
@@ -226,6 +232,7 @@ def startGameTwo():
                 message = "."
             if x[0] == "winner" :
                 playerlabel2['text'] = "WINNER: " + x[1] 
+                playsound('winner.mp3')
         
         game2Tab.update()
 
@@ -455,6 +462,8 @@ mp3nLabel.place(x=980, y=400)
 
 listener = threading.Thread(target=inputListen)
 listener.start()
+musicStart = threading.Thread(target=playMusic)
+musicStart.start()
 root.mainloop()
 exit()
 
