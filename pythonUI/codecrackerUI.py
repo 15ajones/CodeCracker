@@ -242,7 +242,7 @@ def startGameTwo():
             if x[0] == "menu":
                 break
             if x[0] == "start":
-                playerlabel2['text'] = "GO"
+                playerlabel2['text'] = "WAIT FOR PLAY..."
                 movelabel['text'] = x[1]
             if x[0] == "winner" :
                 playerlabel2['text'] = "WINNER: " + x[1]
