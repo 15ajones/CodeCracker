@@ -1031,8 +1031,8 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		length = getActualText();
    10420:	00102940 	call	10294 <getActualText>
    10424:	d0a07b15 	stw	r2,-32276(gp)
-		enteredText[1] = '2';
-   10428:	00800c84 	movi	r2,50
+		enteredText[1] = '1';
+   10428:	00800c44 	movi	r2,49
 		length = getActualText();
 		enteredText[2] = ' ';
    1042c:	04400804 	movi	r17,32
@@ -1041,7 +1041,7 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		admin_flag = 0;
 		enteredText[0] = 'p';
 		length = getActualText();
-		enteredText[1] = '2';
+		enteredText[1] = '1';
    10430:	80800045 	stb	r2,1(r16)
 		length = getActualText();
    10434:	00102940 	call	10294 <getActualText>

@@ -42,6 +42,7 @@ int location;
 int static_flag; //this is gonna be as a response from an input from the database
 int admin_flag;
 int timer = CLOCKINIT;  //Standard speed for movement
+int mode;
 
 char admin_response[3];
 char game_response[100];
@@ -60,7 +61,7 @@ void initializeDisplay(){
 
 char updateText(int serverdata){ // in FPGA change this to if there is any new input
 
-	if (serverdata == 2){ // 2 is the code when "your turn" is sent by the server
+	if (mode == 2){ // 2 is the code when "your turn" is sent by the server
 		static_flag = 0; //play scrolls through
 		admin_flag = 0;
 		enteredText[0] = 'p';
@@ -76,7 +77,7 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		enteredText[5] = ' ';
 		length = getActualText();
 	}
-	else if(serverdata == 1){ //if the server isn't telling fpga to play and fpga is the admin, show word "ADMIN"
+	else if(mode == 1){ //if the server isn't telling fpga to play and fpga is the admin, show word "ADMIN"
 		static_flag = 1; //admin is shown statically
 		admin_flag = 1;
 		enteredText[0] = 'a';
@@ -689,7 +690,9 @@ int main() {
 
 
 		usleep(10000);
-//		if(serverdata == 1 || serverdata == 2)
+		if(serverdata == 1 || serverdata == 2){
+			mode = serverdata;
+		}
 		//calling the display functions and updating the current and previous serverdata chars;
 		if((prevserverdata != serverdata)){ //if the old response and current one are not the same then we want to update the display
 			  updateText(serverdata);

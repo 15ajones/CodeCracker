@@ -689,7 +689,8 @@ int main() {
 
 
 		usleep(10000);
-//		if(serverdata == 1 || serverdata == 2)
+//		if(serverdata == 1 || serverdata == 2){
+		}
 		//calling the display functions and updating the current and previous serverdata chars;
 		if((prevserverdata != serverdata)){ //if the old response and current one are not the same then we want to update the display
 			  updateText(serverdata);
