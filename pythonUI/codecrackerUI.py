@@ -278,7 +278,7 @@ leaderboard_button = Button(
     gameSelection,
     image = img0,
     borderwidth = 0,
-    highlightthickness = 0,
+    highlightthickness = 0, 
     command=lambda:tab.select(leaderboardTab),
     relief = "flat")
 
