@@ -91,6 +91,7 @@ def main():
                 # if start then in_game == true
             
             else:   
+                print("waiting for turn...") 
                 msg, cadd = ec2_client_socket.recvfrom(1024)  #user receives game name
                 server_msg = msg.decode()
                 print("received: " + server_msg)    #always print
