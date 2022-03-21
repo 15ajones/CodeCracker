@@ -14,7 +14,9 @@ module CodeCracker (
 	hex5_external_connection_export,
 	led_external_connection_export,
 	reset_reset_n,
-	switch_external_connection_export);	
+	switch_external_connection_export,
+	uart_0_external_connection_rxd,
+	uart_0_external_connection_txd);	
 
 	inout		accelerometer_spi_0_external_interface_I2C_SDAT;
 	output		accelerometer_spi_0_external_interface_I2C_SCLK;
@@ -31,4 +33,6 @@ module CodeCracker (
 	output	[9:0]	led_external_connection_export;
 	input		reset_reset_n;
 	input	[9:0]	switch_external_connection_export;
+	input		uart_0_external_connection_rxd;
+	output		uart_0_external_connection_txd;
 endmodule

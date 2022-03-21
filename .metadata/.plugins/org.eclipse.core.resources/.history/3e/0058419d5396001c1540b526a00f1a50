@@ -1,0 +1,194 @@
+#include "system.h"
+#include "altera_up_avalon_accelerometer_spi.h"
+#include "altera_avalon_timer_regs.h"
+#include "altera_avalon_timer.h"
+#include "altera_avalon_pio_regs.h"
+#include "sys/alt_irq.h"
+#include "alt_types.h"
+#include "sys/times.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#define OFFSET -32
+#define PWM_PERIOD 16
+#define LEFTLIM 150
+#define RIGHTLIM -150
+
+const int FLATLOW = {-60};
+const int FLATHIGH = {60};
+
+alt_8 pwm = 0;
+alt_u8 led;
+int level;
+
+void led_write(alt_u8 led_pattern) {
+    IOWR(LED_BASE, 0, led_pattern);
+}
+
+void led_response(char check){
+    if(check == 'y'){
+        IOWR(LED_BASE, 0, 256);
+    }else{
+        IOWR(LED_BASE, 0, 16);
+    }
+
+}
+
+
+
+void convert_read(alt_32 acc_read, int * level, alt_u8 * led) {
+    acc_read += OFFSET;
+    alt_u8 val = (acc_read >> 6) & 0x07;
+    * led = (8 >> val) | (8 << (8 - val));
+    * level = (acc_read >> 1) & 0x1f;
+}
+
+int is_flat(alt_32 reading){
+    if((reading < -60) || (reading > 60)){
+        return 0;
+    }else{
+        return 1;
+    }
+}
+
+
+
+void sys_timer_isr() {
+    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_BASE, 0);
+
+    if (pwm < abs(level)) {
+
+        if (level < 0) {
+            led_write(led << 1);
+        } else {
+            led_write(led >> 1);
+        }
+
+    } else {
+        led_write(led);
+    }
+
+    if (pwm > PWM_PERIOD) {
+        pwm = 0;
+    } else {
+        pwm++;
+    }
+
+}
+
+void timer_init(void * isr) {
+
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_BASE, 0x0003);
+    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_BASE, 0);
+    IOWR_ALTERA_AVALON_TIMER_PERIODL(TIMER_BASE, 0x0900);
+    IOWR_ALTERA_AVALON_TIMER_PERIODH(TIMER_BASE, 0x0000);
+    alt_irq_register(TIMER_IRQ, 0, isr);
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_BASE, 0x0007);
+
+}
+
+alt_32 FIR(alt_32 xn)
+{
+  // filter coefficients
+  //static float h[5] = {-0.0694, 0.1533,0.4369, 0.4369, 0.1533, -0.0694};
+  static float h[30] = {-0.0012, 0.0031, 0.0034, -0.0060, -0.0077, 0.0096, 0.0151, -0.0135, -0.0276, 0.0173, 0.0496, -0.0205, -0.0971, 0.0226, 0.3152, 0.4766, 0.3152, 0.0226, -0.0971, -0.0205, 0.0496, 0.0173, -0.0276, -0.0135, 0.0151, 0.0096, -0.0077, -0.0060, 0.0034, 0.0031, -0.0012};
+  // filter gain if applicable
+  static alt_32 hg = 1;
+
+  // delay line of time samples
+  static alt_32 xv[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+  // filter output
+  alt_32 yn = 0;
+
+  // implementation of delay line
+  xv[29] = xv[28];
+  xv[28] = xv[27];
+  xv[27] = xv[26];
+  xv[26] = xv[25];
+  xv[25] = xv[24];
+  xv[24] = xv[23];
+  xv[23] = xv[22];
+  xv[22] = xv[21];
+  xv[21] = xv[20];
+  xv[20] = xv[19];
+  xv[19] = xv[18];
+  xv[18] = xv[17];
+  xv[17] = xv[16];
+  xv[16] = xv[15];
+  xv[15] = xv[14];
+  xv[14] = xv[13];
+  xv[13] = xv[12];
+  xv[12] = xv[11];
+  xv[11] = xv[10];
+  xv[10] = xv[9];
+  xv[9] = xv[8];
+  xv[8] = xv[7];
+  xv[7] = xv[6];
+  xv[6] = xv[5];
+  xv[5] = xv[4];
+  xv[4] = xv[3];
+  xv[3] = xv[2];
+  xv[2] = xv[1];
+  xv[1] = xv[0];
+  xv[0] = xn;
+
+  // convolve delay line by
+  // filter coefficients
+  for(int i=0;i<30;i++)
+  {
+    yn += h[i]*xv[i];
+  }
+  // apply gain
+  yn = hg*yn;
+  return yn;
+}
+
+int main() {
+    //alt_32 cmd;
+    //cmd = alt_getchar();
+
+    alt_32 x_read;
+    alt_up_accelerometer_spi_dev * acc_dev;
+    acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
+    if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
+        return 1;
+    }
+
+    timer_init(sys_timer_isr);
+    char response[100]; // make array for longer sequence
+    int switch_detain;
+    while (1) {
+    	clock_t exec_t1, exec_t2;
+    	exec_t1 = times(NULL);
+        alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+        //printf("RAW: %d\t", x_read);
+        alt_32 FIR_out;
+        FIR_out = FIR(x_read);
+        if(FIR_out < RIGHTLIM){
+            while(is_flat(FIR_out) == 0){
+            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+            	FIR_out = FIR(x_read);
+            }
+            response[100] = 'r';
+            //send response
+        }else if(FIR_out > LEFTLIM){
+            while(is_flat(FIR_out) == 0){
+            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+            	FIR_out = FIR(x_read);
+            }
+            response[100] = 'l';
+            //send response
+        }
+        //printf("<-> %c <->", response[100]);
+        //exec_t2 = times(NULL); // get system time after finishing the process
+        //printf("\tTime = %d ticks \n", (int)(exec_t2-exec_t1));
+        convert_read(x_read, & level, & led);
+
+
+
+    }
+
+    return 0;
+}
+

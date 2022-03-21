@@ -90,7 +90,9 @@ module CodeCracker_top(
 		.hex2_external_connection_export                      (HEX2),                      //               hex2_external_connection.export
 		.hex3_external_connection_export                      (HEX3),                      //               hex3_external_connection.export
 		.hex4_external_connection_export                      (HEX4),                      //               hex4_external_connection.export
-		.hex5_external_connection_export                      (HEX5)                       //               hex5_external_connection.export
+		.hex5_external_connection_export                      (HEX5),                       //               hex5_external_connection.export
+		.uart_0_external_connection_rxd                       (GPIO[4]),                       //             uart_0_external_connection.rxd
+		.uart_0_external_connection_txd                       (GPIO[6])                        //                                       .txd
 	);
 
 

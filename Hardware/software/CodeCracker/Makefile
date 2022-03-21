@@ -142,7 +142,7 @@ ACDS_VERSION := 18.0
 ELF := CodeCracker.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS := accelerometer.c
+C_SRCS := hello_world_small.c
 CXX_SRCS :=
 ASM_SRCS :=
 

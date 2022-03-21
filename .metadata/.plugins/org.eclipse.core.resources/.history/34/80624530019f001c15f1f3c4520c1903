@@ -1,0 +1,363 @@
+//#include "system.h"
+//#include "altera_up_avalon_accelerometer_spi.h"
+//#include "altera_avalon_timer_regs.h"
+//#include "altera_avalon_timer.h"
+//#include "altera_avalon_pio_regs.h"
+//#include "altera_avalon_uart.h"
+//#include "altera_avalon_uart_regs.h"
+//#include "sys/alt_irq.h"
+//#include "alt_types.h"
+//#include "sys/times.h"
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <sys/alt_stdio.h>
+//#include <unistd.h>
+//#include <string.h>
+//
+//#define OFFSET -32
+//#define PWM_PERIOD 16
+//#define LEFTLIM 150
+//#define RIGHTLIM -150
+//#define FORWARDLIM -120 //different allowance for forward allowance
+//#define BACKWARDLIM 120
+//
+//
+//const int FLATLOW = {-60};
+//const int FLATHIGH = {60};
+//
+//alt_8 pwm = 0;
+//alt_u8 led;
+//int level;
+//
+//void led_write(alt_u8 led_pattern) {
+//    IOWR(LED_BASE, 0, led_pattern);
+//}
+//
+//void led_response(char check){
+//    if(check == 'y'){
+//        IOWR(LED_BASE, 0, 256);
+//    }else{
+//        IOWR(LED_BASE, 0, 16);
+//    }
+//
+//}
+//
+//
+//
+//void convert_read(alt_32 acc_read, int * level, alt_u8 * led) {
+//    acc_read += OFFSET;
+//    alt_u8 val = (acc_read >> 6) & 0x07;
+//    * led = (8 >> val) | (8 << (8 - val));
+//    * level = (acc_read >> 1) & 0x1f;
+//}
+//
+//int is_flat(alt_32 reading){
+//    if((reading < -60) || (reading > 60)){
+//        return 0;
+//    }else{
+//        return 1;
+//    }
+//}
+//
+//
+//
+//void sys_timer_isr() {
+//    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_BASE, 0);
+//
+//    if (pwm < abs(level)) {
+//
+//        if (level < 0) {
+//            led_write(led << 1);
+//        } else {
+//            led_write(led >> 1);
+//        }
+//
+//    } else {
+//        led_write(led);
+//    }
+//
+//    if (pwm > PWM_PERIOD) {
+//        pwm = 0;
+//    } else {
+//        pwm++;
+//    }
+//
+//}
+//
+//void timer_init(void * isr) {
+//
+//    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_BASE, 0x0003);
+//    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_BASE, 0);
+//    IOWR_ALTERA_AVALON_TIMER_PERIODL(TIMER_BASE, 0x0900);
+//    IOWR_ALTERA_AVALON_TIMER_PERIODH(TIMER_BASE, 0x0000);
+//    alt_irq_register(TIMER_IRQ, 0, isr);
+//    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_BASE, 0x0007);
+//
+//}
+//
+//alt_32 FIR(alt_32 xn)
+//{
+//  // filter coefficients
+//  //static float h[5] = {-0.0694, 0.1533,0.4369, 0.4369, 0.1533, -0.0694};
+//  static float h[30] = {-0.0012, 0.0031, 0.0034, -0.0060, -0.0077, 0.0096, 0.0151, -0.0135, -0.0276, 0.0173, 0.0496, -0.0205, -0.0971, 0.0226, 0.3152, 0.4766, 0.3152, 0.0226, -0.0971, -0.0205, 0.0496, 0.0173, -0.0276, -0.0135, 0.0151, 0.0096, -0.0077, -0.0060, 0.0034, 0.0031, -0.0012};
+//  // filter gain if applicable
+//  static alt_32 hg = 1;
+//
+//  // delay line of time samples
+//  static alt_32 xv[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//
+//  // filter output
+//  alt_32 yn = 0;
+//
+//  // implementation of delay line
+//  xv[29] = xv[28];
+//  xv[28] = xv[27];
+//  xv[27] = xv[26];
+//  xv[26] = xv[25];
+//  xv[25] = xv[24];
+//  xv[24] = xv[23];
+//  xv[23] = xv[22];
+//  xv[22] = xv[21];
+//  xv[21] = xv[20];
+//  xv[20] = xv[19];
+//  xv[19] = xv[18];
+//  xv[18] = xv[17];
+//  xv[17] = xv[16];
+//  xv[16] = xv[15];
+//  xv[15] = xv[14];
+//  xv[14] = xv[13];
+//  xv[13] = xv[12];
+//  xv[12] = xv[11];
+//  xv[11] = xv[10];
+//  xv[10] = xv[9];
+//  xv[9] = xv[8];
+//  xv[8] = xv[7];
+//  xv[7] = xv[6];
+//  xv[6] = xv[5];
+//  xv[5] = xv[4];
+//  xv[4] = xv[3];
+//  xv[3] = xv[2];
+//  xv[2] = xv[1];
+//  xv[1] = xv[0];
+//  xv[0] = xn;
+//
+//  // convolve delay line by
+//  // filter coefficients
+//  for(int i=0;i<30;i++)
+//  {
+//    yn += h[i]*xv[i];
+//  }
+//  // apply gain
+//  yn = hg*yn;
+//  return yn;
+//}
+//
+//int main() {
+//    //alt_32 cmd;
+//    //cmd = alt_getchar();
+//
+//	///%Accelerometer initialisations%///
+//
+//    alt_32 x_read;
+//    alt_32 y_read;
+//    alt_32 z_read;
+//    alt_up_accelerometer_spi_dev * acc_dev;
+//    acc_dev = alt_up_accelerometer_spi_open_dev("/dev/accelerometer_spi");
+//    if (acc_dev == NULL) { // if return 1, check if the spi ip name is "accelerometer_spi"
+//        return 1;
+//    }
+//
+//    ///%switches and buttons initialisation%///
+//    timer_init(sys_timer_isr);
+//    int button_datain;
+//    int switch_datain;
+//    char response[100] = "";
+//    int flicked_switch;
+//
+//    ///Code///
+//    while (1) {
+//
+//    	///Switches code///
+//     	switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
+//    	switch_datain &= (0b1111111111);
+//
+//    	if(switch_datain != 0){
+//			flicked_switch = switch_datain;
+//			while(switch_datain != 0){
+//				//printf("here \n");
+//				switch_datain = IORD_ALTERA_AVALON_PIO_DATA(SWITCH_BASE);
+//				switch_datain &= (0b1111111111);
+//			}
+//
+//			if(flicked_switch == 1){
+//				strcat(response,"1");
+//				printf("\nResponse: %s\n", response);
+//			}
+//			else if(flicked_switch == 2){
+//				strcat(response,"2");
+//				printf("\nResponse: %s\n", response);
+//			}
+//			else if(flicked_switch == 4){
+//				strcat(response,"3");
+//				printf("\nResponse: %s\n", response);
+//			}
+////			else if(flicked_switch == 8){
+////				response = '4\0';
+////			}
+////			else if(flicked_switch == 16){
+////				response = '5\0';
+////			}
+////			else if(flicked_switch == 32){
+////				response = '6\0';
+////			}
+////			else if(flicked_switch == 64){
+////				response = '7\0';
+////			}
+////			else if(flicked_switch == 128){
+////				response = '8\0';
+////			}
+////			else if(flicked_switch == 256){
+////				response = '9\0';
+////			}
+////			else if(flicked_switch == 512){
+////				response = '0\0';
+////			}
+//			//printf("response = %d\n", response);
+//
+//		}
+//
+//    	////Accelerometer code//////
+//
+//    	clock_t exec_t1, exec_t2;
+//    	exec_t1 = times(NULL);
+//
+//        alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+//        alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+//        // alt_up_accelerometer_spi_read_z_axis(acc_dev, & z_read);
+//        alt_32 FIR_out[3];
+//        FIR_out[0] = FIR(x_read);
+//        FIR_out[1] = y_read;
+//        // FIR_out[2] = z_read;
+//
+//        //printf("FIR out x = %d \n", FIR_out[0]);
+//        //printf("FIR out y = %d \n", FIR_out[1]);
+//        //printf("FIR out z = %d \n", FIR_out[2]);
+//
+//        //Left & Right//
+//
+//        if(FIR_out[0] < RIGHTLIM){
+//            while(is_flat(FIR_out[0]) == 0){
+//            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+//            	FIR_out[0] = FIR(x_read);
+//            }
+//            strcat(response, "R");
+//            printf("\nResponse: %s\n", response);
+//
+//        }else if(FIR_out[0] > LEFTLIM){
+//            while(is_flat(FIR_out[0]) == 0){
+//            	alt_up_accelerometer_spi_read_x_axis(acc_dev, & x_read);
+//            	FIR_out[0] = FIR(x_read);
+//            }
+//            strcat(response, "L");
+//            printf("\nResponse: %s\n", response);
+//        }
+//
+//        //Forward & Backward//
+//
+//        if(FIR_out[1] < FORWARDLIM){
+//			while(is_flat(FIR_out[1]) == 0){
+//				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+//				FIR_out[1] = y_read;
+//			}
+//			strcat(response, "F");
+//            printf("\nResponse: %s\n", response);
+//
+//		}else if(FIR_out[1] > BACKWARDLIM){
+//			while(is_flat(FIR_out[1]) == 0){
+//				alt_up_accelerometer_spi_read_y_axis(acc_dev, & y_read);
+//				FIR_out[1] = y_read;
+//			}
+//			strcat(response, "B");
+//            printf("\nResponse: %s\n", response);
+//        }
+//
+//        ////////////////////////
+//
+//
+//        //////send button///////
+//        button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+//		if(button_datain &= 0b0000000001){
+//			int i = 0;
+//			while (response[i] != '\0'){
+//				IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, response[i]);
+//				i++;
+//				usleep(30000) ;
+//				printf("\nSending: %s\n", response);
+//			}
+//		}
+//		//reset button
+//		button_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+//		if(button_datain &= 0b0000000010){
+//			//reset response
+//			memset(response,0,strlen(response));
+//			printf("Resetting...\n");
+//		}
+//		else {
+//			usleep(50000);
+//		}
+//
+//        //printf("<-> %c <->", response[100]);
+//        convert_read(x_read, & level, & led);
+//
+//
+//
+//    }
+//
+//    return 0;
+//}
+
+#include <stdio.h>
+#include <sys/alt_stdio.h>
+#include <unistd.h>
+#include "system.h"
+#include "alt_types.h"
+
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart.h"
+#include "altera_avalon_uart_regs.h"
+
+//
+int main(void)
+{
+	char x[100] = "Code Crackers!\n";
+	char y[100] = "PRAWN!\n";
+	int switch_datain;
+    while(1)
+    {
+    	switch_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+    	if(switch_datain &= 0b0000000001){
+    		int i = 0;
+            while (x[i] != '\0') {
+                IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, x[i]) ;
+                i++;
+                usleep(10000) ;
+            }
+        }
+    	switch_datain = ~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_BASE);
+    	if(switch_datain &= 0b0000000010){
+    		int i = 0;
+    		while (y[i] != '\0') {
+    		    IOWR_ALTERA_AVALON_UART_TXDATA(UART_0_BASE, y[i]) ;
+    		    i++;
+    		    usleep(10000) ;
+    		}
+    	}
+    	else {
+    		usleep(50000);
+    	}
+    }
+
+    return 0 ;
+
+}
+

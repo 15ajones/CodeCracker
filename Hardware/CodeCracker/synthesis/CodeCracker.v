@@ -18,7 +18,9 @@ module CodeCracker (
 		output wire [6:0] hex5_external_connection_export,                      //               hex5_external_connection.export
 		output wire [9:0] led_external_connection_export,                       //                led_external_connection.export
 		input  wire       reset_reset_n,                                        //                                  reset.reset_n
-		input  wire [9:0] switch_external_connection_export                     //             switch_external_connection.export
+		input  wire [9:0] switch_external_connection_export,                    //             switch_external_connection.export
+		input  wire       uart_0_external_connection_rxd,                       //             uart_0_external_connection.rxd
+		output wire       uart_0_external_connection_txd                        //                                       .txd
 	);
 
 	wire  [31:0] cpu_data_master_readdata;                                                            // mm_interconnect_0:cpu_data_master_readdata -> cpu:d_readdata
@@ -108,11 +110,19 @@ module CodeCracker (
 	wire   [1:0] mm_interconnect_0_hex5_s1_address;                                                   // mm_interconnect_0:hex5_s1_address -> hex5:address
 	wire         mm_interconnect_0_hex5_s1_write;                                                     // mm_interconnect_0:hex5_s1_write -> hex5:write_n
 	wire  [31:0] mm_interconnect_0_hex5_s1_writedata;                                                 // mm_interconnect_0:hex5_s1_writedata -> hex5:writedata
+	wire         mm_interconnect_0_uart_0_s1_chipselect;                                              // mm_interconnect_0:uart_0_s1_chipselect -> uart_0:chipselect
+	wire  [15:0] mm_interconnect_0_uart_0_s1_readdata;                                                // uart_0:readdata -> mm_interconnect_0:uart_0_s1_readdata
+	wire   [2:0] mm_interconnect_0_uart_0_s1_address;                                                 // mm_interconnect_0:uart_0_s1_address -> uart_0:address
+	wire         mm_interconnect_0_uart_0_s1_read;                                                    // mm_interconnect_0:uart_0_s1_read -> uart_0:read_n
+	wire         mm_interconnect_0_uart_0_s1_begintransfer;                                           // mm_interconnect_0:uart_0_s1_begintransfer -> uart_0:begintransfer
+	wire         mm_interconnect_0_uart_0_s1_write;                                                   // mm_interconnect_0:uart_0_s1_write -> uart_0:write_n
+	wire  [15:0] mm_interconnect_0_uart_0_s1_writedata;                                               // mm_interconnect_0:uart_0_s1_writedata -> uart_0:writedata
 	wire         irq_mapper_receiver0_irq;                                                            // accelerometer_spi:irq -> irq_mapper:receiver0_irq
 	wire         irq_mapper_receiver1_irq;                                                            // jtag_uart:av_irq -> irq_mapper:receiver1_irq
 	wire         irq_mapper_receiver2_irq;                                                            // timer:irq -> irq_mapper:receiver2_irq
+	wire         irq_mapper_receiver3_irq;                                                            // uart_0:irq -> irq_mapper:receiver3_irq
 	wire  [31:0] cpu_irq_irq;                                                                         // irq_mapper:sender_irq -> cpu:irq
-	wire         rst_controller_reset_out_reset;                                                      // rst_controller:reset_out -> [accelerometer_spi:reset, button:reset_n, cpu:reset_n, hex0:reset_n, hex1:reset_n, hex2:reset_n, hex3:reset_n, hex4:reset_n, hex5:reset_n, irq_mapper:reset, jtag_uart:rst_n, led:reset_n, mm_interconnect_0:cpu_reset_reset_bridge_in_reset_reset, onchip_memory:reset, rst_translator:in_reset, switch:reset_n, sysid_qsys_0:reset_n, timer:reset_n]
+	wire         rst_controller_reset_out_reset;                                                      // rst_controller:reset_out -> [accelerometer_spi:reset, button:reset_n, cpu:reset_n, hex0:reset_n, hex1:reset_n, hex2:reset_n, hex3:reset_n, hex4:reset_n, hex5:reset_n, irq_mapper:reset, jtag_uart:rst_n, led:reset_n, mm_interconnect_0:cpu_reset_reset_bridge_in_reset_reset, onchip_memory:reset, rst_translator:in_reset, switch:reset_n, sysid_qsys_0:reset_n, timer:reset_n, uart_0:reset_n]
 	wire         rst_controller_reset_out_reset_req;                                                  // rst_controller:reset_req -> [cpu:reset_req, onchip_memory:reset_req, rst_translator:reset_req_in]
 
 	CodeCracker_accelerometer_spi accelerometer_spi (
@@ -299,6 +309,21 @@ module CodeCracker (
 		.irq        (irq_mapper_receiver2_irq)               //   irq.irq
 	);
 
+	CodeCracker_uart_0 uart_0 (
+		.clk           (clk_clk),                                   //                 clk.clk
+		.reset_n       (~rst_controller_reset_out_reset),           //               reset.reset_n
+		.address       (mm_interconnect_0_uart_0_s1_address),       //                  s1.address
+		.begintransfer (mm_interconnect_0_uart_0_s1_begintransfer), //                    .begintransfer
+		.chipselect    (mm_interconnect_0_uart_0_s1_chipselect),    //                    .chipselect
+		.read_n        (~mm_interconnect_0_uart_0_s1_read),         //                    .read_n
+		.write_n       (~mm_interconnect_0_uart_0_s1_write),        //                    .write_n
+		.writedata     (mm_interconnect_0_uart_0_s1_writedata),     //                    .writedata
+		.readdata      (mm_interconnect_0_uart_0_s1_readdata),      //                    .readdata
+		.rxd           (uart_0_external_connection_rxd),            // external_connection.export
+		.txd           (uart_0_external_connection_txd),            //                    .export
+		.irq           (irq_mapper_receiver3_irq)                   //                 irq.irq
+	);
+
 	CodeCracker_mm_interconnect_0 mm_interconnect_0 (
 		.clk_0_clk_clk                                                     (clk_clk),                                                                             //                                             clk_0_clk.clk
 		.cpu_reset_reset_bridge_in_reset_reset                             (rst_controller_reset_out_reset),                                                      //                       cpu_reset_reset_bridge_in_reset.reset
@@ -388,7 +413,14 @@ module CodeCracker (
 		.timer_s1_write                                                    (mm_interconnect_0_timer_s1_write),                                                    //                                                      .write
 		.timer_s1_readdata                                                 (mm_interconnect_0_timer_s1_readdata),                                                 //                                                      .readdata
 		.timer_s1_writedata                                                (mm_interconnect_0_timer_s1_writedata),                                                //                                                      .writedata
-		.timer_s1_chipselect                                               (mm_interconnect_0_timer_s1_chipselect)                                                //                                                      .chipselect
+		.timer_s1_chipselect                                               (mm_interconnect_0_timer_s1_chipselect),                                               //                                                      .chipselect
+		.uart_0_s1_address                                                 (mm_interconnect_0_uart_0_s1_address),                                                 //                                             uart_0_s1.address
+		.uart_0_s1_write                                                   (mm_interconnect_0_uart_0_s1_write),                                                   //                                                      .write
+		.uart_0_s1_read                                                    (mm_interconnect_0_uart_0_s1_read),                                                    //                                                      .read
+		.uart_0_s1_readdata                                                (mm_interconnect_0_uart_0_s1_readdata),                                                //                                                      .readdata
+		.uart_0_s1_writedata                                               (mm_interconnect_0_uart_0_s1_writedata),                                               //                                                      .writedata
+		.uart_0_s1_begintransfer                                           (mm_interconnect_0_uart_0_s1_begintransfer),                                           //                                                      .begintransfer
+		.uart_0_s1_chipselect                                              (mm_interconnect_0_uart_0_s1_chipselect)                                               //                                                      .chipselect
 	);
 
 	CodeCracker_irq_mapper irq_mapper (
@@ -397,6 +429,7 @@ module CodeCracker (
 		.receiver0_irq (irq_mapper_receiver0_irq),       // receiver0.irq
 		.receiver1_irq (irq_mapper_receiver1_irq),       // receiver1.irq
 		.receiver2_irq (irq_mapper_receiver2_irq),       // receiver2.irq
+		.receiver3_irq (irq_mapper_receiver3_irq),       // receiver3.irq
 		.sender_irq    (cpu_irq_irq)                     //    sender.irq
 	);
 

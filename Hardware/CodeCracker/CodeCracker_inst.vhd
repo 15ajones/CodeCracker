@@ -14,7 +14,9 @@
 			hex5_external_connection_export                      : out   std_logic_vector(6 downto 0);                    -- export
 			led_external_connection_export                       : out   std_logic_vector(9 downto 0);                    -- export
 			reset_reset_n                                        : in    std_logic                    := 'X';             -- reset_n
-			switch_external_connection_export                    : in    std_logic_vector(9 downto 0) := (others => 'X')  -- export
+			switch_external_connection_export                    : in    std_logic_vector(9 downto 0) := (others => 'X'); -- export
+			uart_0_external_connection_rxd                       : in    std_logic                    := 'X';             -- rxd
+			uart_0_external_connection_txd                       : out   std_logic                                        -- txd
 		);
 	end component CodeCracker;
 
@@ -34,6 +36,8 @@
 			hex5_external_connection_export                      => CONNECTED_TO_hex5_external_connection_export,                      --               hex5_external_connection.export
 			led_external_connection_export                       => CONNECTED_TO_led_external_connection_export,                       --                led_external_connection.export
 			reset_reset_n                                        => CONNECTED_TO_reset_reset_n,                                        --                                  reset.reset_n
-			switch_external_connection_export                    => CONNECTED_TO_switch_external_connection_export                     --             switch_external_connection.export
+			switch_external_connection_export                    => CONNECTED_TO_switch_external_connection_export,                    --             switch_external_connection.export
+			uart_0_external_connection_rxd                       => CONNECTED_TO_uart_0_external_connection_rxd,                       --             uart_0_external_connection.rxd
+			uart_0_external_connection_txd                       => CONNECTED_TO_uart_0_external_connection_txd                        --                                       .txd
 		);
 
