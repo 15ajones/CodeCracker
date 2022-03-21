@@ -431,7 +431,7 @@ movelabel = Label(game2Tab, text="LAST MOVE:", fg='white', font=mmtextFont, back
 movelabel.place(x=200, y=340)
 
 remaining = Label(game2Tab, text="REMAINING PLAYERS: ", fg='white', font=mmtextFont, background="#164181")
-remaining.place(x=200, y=450)
+#remaining.place(x=200, y=450)
 
 remainingplayers = Label(game2Tab, text="PLAYER_1\nPLAYER_2\nPLAYER_3", fg='white', font=mmtextFont, background="#164181")
 remainingplayers.place(x=200, y=490)
