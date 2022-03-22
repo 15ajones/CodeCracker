@@ -98,7 +98,7 @@ char updateText(int serverdata){ // in FPGA change this to if there is any new i
 		admin_flag = 0;
 		enteredText[0] = 'p';
 		length = getActualText();
-		enteredText[1] = '1';
+		enteredText[1] = '2';
 		length = getActualText();
 		enteredText[2] = ' ';
 		length = getActualText();
