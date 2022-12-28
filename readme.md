@@ -1,4 +1,4 @@
-# CodeCracker - FPGA/Arduino IOT system with complete UI
+# CodeCracker - FPGA/Arduino IoT system with complete UI
 
 Developed by Rohan Gandhi, Anthony Jones, Sherif Agbabiaka, Omar Zeidan, Maia Ramambaison, Luca Fenocchi
 
